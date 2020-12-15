@@ -1,6 +1,6 @@
 import React from 'react'
 import Enzyme, { shallow, mount, render } from 'enzyme'
-import Message from '../Message'
+import Message from './Message'
 
 describe('<Message />', () => {
   test('renders a single <p> tag', () => {
