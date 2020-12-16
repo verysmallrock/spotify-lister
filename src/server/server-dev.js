@@ -4,11 +4,18 @@ import webpack from 'webpack'
 import webpackDevMiddleware from 'webpack-dev-middleware'
 import webpackHotMiddleware from 'webpack-hot-middleware'
 import config from '../../webpack.dev.config.js'
+import cors from 'cors'
+import cookieParser from 'cookie-parser'
+
+import auth from './routes/auth'
 
 const app = express(),
             DIST_DIR = __dirname,
             HTML_FILE = path.join(DIST_DIR, 'index.html'),
             compiler = webpack(config)
+
+app.use(cors())
+   .use(cookieParser());
 
 app.use(webpackDevMiddleware(compiler, {
   publicPath: config.output.publicPath
@@ -16,7 +23,9 @@ app.use(webpackDevMiddleware(compiler, {
 
 app.use(webpackHotMiddleware(compiler))
 
-app.get('*', (req, res, next) => {
+app.use(auth)
+
+app.get('/', (req, res, next) => {
   compiler.outputFileSystem.readFile(HTML_FILE, (err, result) => {
   if (err) {
     return next(err)

@@ -1,19 +1,14 @@
 const path = require('path')
 const webpack = require('webpack')
 const HtmlWebPackPlugin = require('html-webpack-plugin')
+const { merge } = require('webpack-merge')
+const common = require('./webpack.common.config.js')
 
-module.exports = {
-  entry: {
-    main: ['webpack-hot-middleware/client?path=/__webpack_hmr&timeout=20000', './src/index.js']
-  },
-  output: {
-    path: path.join(__dirname, 'dist'),
-    publicPath: '/',
-    filename: '[name].js'
-  },
+module.exports = merge(common, {
   mode: 'development',
-  target: 'web',
-  devtool: '#source-map',
+  entry: {
+    main: ['webpack-hot-middleware/client?path=/__webpack_hmr&timeout=20000', './src/js/index.js']
+  },
   module: {
     rules: [
       {
@@ -72,4 +67,4 @@ module.exports = {
     new webpack.HotModuleReplacementPlugin(),
     new webpack.NoEmitOnErrorsPlugin()
   ]
-}
+})
