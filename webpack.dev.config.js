@@ -7,7 +7,7 @@ const common = require('./webpack.common.config.js')
 module.exports = merge(common, {
   mode: 'development',
   entry: {
-    main: ['webpack-hot-middleware/client?path=/__webpack_hmr&timeout=20000', './src/js/index.js']
+    main: ['babel-polyfill', 'webpack-hot-middleware/client?path=/__webpack_hmr&timeout=20000', './src/js/index.js']
   },
   module: {
     rules: [
