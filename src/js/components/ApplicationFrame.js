@@ -1,12 +1,19 @@
 import React from 'react'
 import SpotifyLister from './SpotifyLister'
+import SigninView from './SigninView'
 import S from './ApplicationFrame.css'
 
-const ApplicationFrame = (args) => {
-	let params = args.params
+
+import getHashParams from '../utils/hashParams'
+let hashParams = getHashParams()
+
+let access_token = hashParams.access_token,
+    error = hashParams.error
+
+const ApplicationFrame = () => {
 	return (
 		<div className={ S.root }>
-			<SpotifyLister auth={ params } />	
+			{ access_token ? <SpotifyLister auth={ hashParams } /> : <SigninView /> }
 		</div>
 	)
 }
