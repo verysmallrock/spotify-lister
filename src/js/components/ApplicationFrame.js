@@ -8,14 +8,14 @@ import getHashParams from '../utils/hashParams'
 let hashParams = getHashParams()
 
 let access_token = hashParams.access_token,
-    error = hashParams.error
+	error = hashParams.error
 
-const ApplicationFrame = () => {
-	return (
-		<div className={ S.root }>
-			{ access_token ? <SpotifyLister auth={ hashParams } /> : <SigninView /> }
-		</div>
-	)
+export default class ApplicationFrame extends React.Component {
+	render() {
+		return (
+			<div className={ S.root }>
+				{ error ? `ERROR: ${error}` : (access_token ? <SpotifyLister auth={ hashParams } /> : <SigninView />) }
+			</div>
+		)
+	}
 }
-
-export default ApplicationFrame
