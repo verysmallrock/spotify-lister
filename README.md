@@ -8,31 +8,31 @@ Rexpack can be run locally on your machine, or pushed to Google App Engine Flexi
 
 ## Installation
 
-    npm install
+    yarn install
 
 ## Create a Development build
 
-    npm run buildDev
+    yarn run buildDev
 
 ## Create a Production build
 
-    npm run buildProd
+    yarn run buildProd
 
 ## Run the code on a local webserver
 
-    npm start
+    yarn run start
 
 Then navigate to `http://localhost:8080`
 
 ## Deploy to Google App Engine Flex
 
-    npm run deploy
+    yarn run deploy
 
 ## Run test
 
-    npm test
+    yarn test
 
 ## Generate coverage report
 
-    npm run coverage
+    yarn run coverage
 
