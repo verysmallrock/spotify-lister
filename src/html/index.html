@@ -7,5 +7,51 @@
 </head>
 <body>
     <div id="react-container"></div>
+    <script src="https://sdk.scdn.co/spotify-player.js"></script>
+    <script>
+        // TODO: Make this a class
+        window.onSpotifyWebPlaybackSDKReady = () => {
+          const token = /access_token\=([^&]+)/.exec(window.location.hash)[1]
+          const player = new Spotify.Player({
+            name: 'Spotify-Lister',
+            getOAuthToken: cb => { cb(token); }
+          });
+    
+          // Error handling
+          player.addListener('initialization_error', ({ message }) => { console.error(message); });
+          player.addListener('authentication_error', ({ message }) => { console.error(message); });
+          player.addListener('account_error', ({ message }) => { console.error(message); });
+          player.addListener('playback_error', ({ message }) => { console.error(message); });
+    
+          // Playback status updates
+          player.addListener('player_state_changed', state => { console.log(state); });
+    
+          // Ready
+          player.addListener('ready', ({ device_id }) => {
+            console.log('Ready with Device ID', device_id);
+          });
+    
+          // Not Ready
+          player.addListener('not_ready', ({ device_id }) => {
+            console.log('Device ID has gone offline', device_id);
+          });
+    
+          // Connect to the player!
+          player.connect();
+          
+          window.spotifyPlayer = player
+          window.playSpotifyUri = (uri) => {
+            id = player._options.id
+            fetch(`https://api.spotify.com/v1/me/player/play?device_id=${id}`, {
+                method: 'PUT',
+                body: JSON.stringify({ uris: [uri] }),
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${token}`
+                },
+                })
+            }
+        }
+      </script>
 </body>
 </html>

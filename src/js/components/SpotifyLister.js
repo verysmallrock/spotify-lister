@@ -1,5 +1,5 @@
 import React from 'react'
-import PropTypes from 'prop-types';
+import PropTypes from 'prop-types'
 import S from './SpotifyLister.css'
 import SpotifyService from '../models/service/SpotifyService'
 import SpotifyStore from '../models/SpotifyStore';
@@ -19,9 +19,8 @@ class SpotifyLister extends React.Component {
 
 	constructor(props) {
 		super(props)
-		this.service = new SpotifyService(this.auth.access_token)
+		this.service = new SpotifyService(this.auth.access_token, this.auth.refresh_token)
 		this.store = new SpotifyStore(this.service)
-		this.store.fetchSavedTracksJP()
 	}
 
 	get auth() {

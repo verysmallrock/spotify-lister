@@ -1,8 +1,14 @@
 import React from 'react'
-import { observer } from 'mobx-react';
+import PropTypes from 'prop-types'
+import { observer } from 'mobx-react'
 
 @observer
 class UserInfoView extends React.Component {
+	static get propTypes() {
+		return {
+			store: PropTypes.any
+		}
+	}
 
 	constructor(props) {
 		super(props)

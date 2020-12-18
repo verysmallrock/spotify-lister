@@ -1,6 +1,7 @@
 export default class SpotifyService {
-	constructor(authToken) {
+	constructor(authToken, refreshToken) {
 		this.authToken = authToken
+		this.refreshToken = refreshToken
 	}
 
 	_setAuthHeader(options) {
@@ -22,6 +23,10 @@ export default class SpotifyService {
 		if (response.ok) {
 			return await response.json()
 		} else {
+			if (response.status === 401) {
+				// refresh token
+				return window.location.href = `${window.location.protocol}//${window.location.host}/refresh_token?refresh_token=${this.refreshToken}`
+			}
 			let error = await response.text()
 			throw `Error fetching from Spotify: ${response.status} (${error})`
 		}
