@@ -1,11 +1,13 @@
-import { action, makeAutoObservable } from 'mobx';
+import { action, makeAutoObservable, observable } from 'mobx'
+import { persist } from 'mobx-persist'
 
 export default class Track  {
-	features = {}
-	attributes = {}
-	addedAt = ''
+	@persist('object') @observable features = {}
+	@persist('object') @observable attributes = {}
+	@persist @observable addedAt = ''
+	@persist @observable id = ''
 
-	constructor(attributes, addedAt) {
+	constructor(attributes = {}, addedAt = '') {
 		makeAutoObservable(this)
 		this.attributes = attributes
 		this.addedAt = addedAt

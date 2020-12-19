@@ -32,6 +32,7 @@ class SpotifyLister extends React.Component {
 		super(props)
 		this.service = new SpotifyService(this.auth.access_token, this.auth.refresh_token)
 		this.store = new SpotifyStore(this.service)
+		window.spotifystore = this.store
 		this.windowState = new WindowState()		
 	}
 

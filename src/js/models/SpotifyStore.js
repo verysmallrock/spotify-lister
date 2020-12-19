@@ -1,16 +1,29 @@
-import { action, makeAutoObservable } from 'mobx';
+import { observable, action, makeAutoObservable } from 'mobx'
+import { create, persist } from 'mobx-persist'
 import Track from './Track'
 
-export default class SpotifyStore  {
-	userInfo = {}
-	savedTracks = []
+const hydrate = create({
+	storage: localStorage,
+	jsonify: true,
+	debounce: 500
+})
 
-	trackMap = {}
+export default class SpotifyStore  {
+	@persist('object') @observable userInfo = {}
+	@persist('list', Track) @observable savedTracks = []
+	@observable trackMap = {}
 
 	constructor(service) {
 		makeAutoObservable(this)
 		this.service = service // SpotifyService
+		this.init()
+	}
 
+	async init() {
+		await Promise.all([
+			hydrate('store', this)
+		])
+		this._reindex()
 		this.fetchUserInfoJP()
 	}
 
@@ -43,7 +56,6 @@ export default class SpotifyStore  {
 		for (let featureInfo of features) {
 			this.trackMap[featureInfo.id].setFeatures(featureInfo)
 		}
-
 	}
 
 	@action updateUserInfo(userInfo) {
@@ -51,12 +63,22 @@ export default class SpotifyStore  {
 	}
 
 	@action updateSavedTracks(json) {
-		this.savedTracks = this.savedTracks ?? []
+		//this.savedTracks = this.savedTracks ?? []
+		let tracks = []
 		for (let item of json.items) {
 			let track = new Track(item.track, item.added_at)
-			this.savedTracks.push(track)
+			tracks.push(track)
+			
+		}
+		this.savedTracks = tracks
+		this._reindex()
+		return this.savedTracks
+	}
+
+	_reindex() {
+		this.trackMap = {}
+		for(let track of this.savedTracks) {
 			this.trackMap[track.id] = track
 		}
-		return this.savedTracks
 	}
 }
