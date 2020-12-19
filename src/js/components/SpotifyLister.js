@@ -3,7 +3,7 @@ import PropTypes from 'prop-types'
 import S from './SpotifyLister.css'
 import SpotifyService from '../models/service/SpotifyService'
 import SpotifyStore from '../models/SpotifyStore';
-import { makeAutoObservable } from 'mobx';
+import { action, makeAutoObservable } from 'mobx';
 import { observer } from 'mobx-react'
 import UserInfoView from './UserInfoView';
 import TrackList from './TrackList';
@@ -15,8 +15,12 @@ class WindowState {
 	constructor() {
 		makeAutoObservable(this)
 		window.addEventListener('scroll', ()=> {
-			this.scrolledDown = window.pageYOffset > 0
+			this.setScrollValue(window.pageYOffset > 0)
 		});
+	}
+
+	@action setScrollValue(value) {
+		this.scrolledDown = value
 	}
 }
 
