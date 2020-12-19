@@ -77,6 +77,7 @@ class TrackList extends React.Component {
 		let list = []
 		this.tracks.forEach((track, index) => {
 			list.push(<TrackInfo key={track.id} 
+				store={ this.store }
 				index={ index }
 				trackInfo={ track } 
 				columnInfo={ columnInfo }

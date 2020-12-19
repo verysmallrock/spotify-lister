@@ -9,17 +9,18 @@ class TrackInfo extends React.Component {
 
 	static get propTypes() {
 		return {
+			store: PropTypes.any,
 			auth: PropTypes.any,
 			trackInfo: PropTypes.any,
 			columnInfo: PropTypes.any,
 			getDataFunc: PropTypes.any,
 			index: PropTypes.any,
-
 		}
 	}
 
 	constructor(props) {
 		super(props)
+		this.store = props.store
 		this.info = props.trackInfo
 		this.columnInfo = props.columnInfo
 		this.getDataFunc = props.getDataFunc
@@ -27,7 +28,7 @@ class TrackInfo extends React.Component {
 	}
 
 	playTrack() {
-		window.playSpotifyUri(this.info.attributes.uri)
+		this.store.spotifyPlayer.playSpotifyUri(this.info.attributes.uri)
 	}
 
 	renderData() {

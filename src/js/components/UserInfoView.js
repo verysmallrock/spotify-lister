@@ -1,6 +1,7 @@
 import React from 'react'
 import PropTypes from 'prop-types'
 import { observer } from 'mobx-react'
+import S from './UserInfoView.css'
 
 @observer
 class UserInfoView extends React.Component {
@@ -20,7 +21,7 @@ class UserInfoView extends React.Component {
 		let images = this.store?.userInfo?.images
 		let avatarUrl = (images ?? [])[0]?.url
 
-		return <div>
+		return <div className={ S.root }>
 			<p>{"You are: " + displayName }</p>
 			<img src={`${avatarUrl}`} />
 		</div>
