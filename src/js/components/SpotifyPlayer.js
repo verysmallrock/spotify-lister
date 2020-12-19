@@ -1,4 +1,9 @@
+/* 
+	eslint-disable no-console 
+*/
+
 import React from 'react'
+import PropTypes from 'prop-types'
 import { observer } from 'mobx-react'
 import { action, makeAutoObservable } from 'mobx'
 import S from './SpotifyPlayer.css'
@@ -20,6 +25,12 @@ class EmbedData {
 
 @observer
 class SpotifyPlayer extends React.Component {
+	static get propTypes() {
+		return {
+			authToken: PropTypes.any,
+			store: PropTypes.any
+		}
+	}
 
 	constructor(props) {
 		super(props)
@@ -31,7 +42,7 @@ class SpotifyPlayer extends React.Component {
 	async initialize() {
 		this.embedData = new EmbedData()
 		await window.SpotifyIsReadyJP
-		const player = new Spotify.Player({
+		const player = new window.Spotify.Player({
 			name: 'Spotify-Lister',
 			getOAuthToken: cb => { cb(this.authToken); }
 		})
