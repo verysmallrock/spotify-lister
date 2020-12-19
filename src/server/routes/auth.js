@@ -96,7 +96,6 @@ router.get('/callback', function(req, res) {
 
 	// requesting access token from refresh token
 	var refresh_token = req.query.refresh_token;
-	console.log('getting refresh', refresh_token)
 	var authOptions = {
 	  url: 'https://accounts.spotify.com/api/token',
 	  headers: { 'Authorization': 'Basic ' + (new Buffer(client_id + ':' + client_secret).toString('base64')) },
@@ -108,9 +107,7 @@ router.get('/callback', function(req, res) {
 	};
   
 	request.post(authOptions, function(error, response, body) {
-		console.log('response', response.statusCode)
 	  if (!error && response.statusCode === 200) {
-		console.log("REspone:", body.access_token, body.refresh_token)
 		var access_token = body.access_token;
 		res.redirect('/#' +
 		querystring.stringify({
