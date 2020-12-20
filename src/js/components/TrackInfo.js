@@ -28,7 +28,7 @@ class TrackInfo extends React.Component {
 	}
 
 	playTrack() {
-		this.store.spotifyPlayer.playSpotifyUri(this.info.attributes.uri)
+		this.store.playUri(this.info.attributes.uri)
 	}
 
 	renderData() {

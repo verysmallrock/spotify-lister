@@ -1,6 +1,6 @@
 import { observable, action, makeAutoObservable } from 'mobx'
 import { create, persist } from 'mobx-persist'
-import Track from './Track'
+import TrackList from './TrackList'
 
 const hydrate = create({
 	storage: localStorage,
@@ -10,8 +10,9 @@ const hydrate = create({
 
 export default class SpotifyStore  {
 	@persist('object') @observable userInfo = {}
-	@persist('list', Track) @observable savedTracks = []
-	@observable trackMap = {}
+	@persist('object', TrackList) savedTrackList = null
+
+	playingUris = []
 
 	constructor(service) {
 		makeAutoObservable(this)
@@ -19,11 +20,15 @@ export default class SpotifyStore  {
 		this.init()
 	}
 
+	playUri(uri) {
+		this.playingUris = [ uri ]
+	}
+
 	async init() {
 		await Promise.all([
 			hydrate('store', this)
 		])
-		this._reindex()
+		this.savedTrackList?.hydrationComplete(this.service)
 		this.fetchUserInfoJP()
 	}
 
@@ -35,11 +40,14 @@ export default class SpotifyStore  {
 		return this.userInfo
 	}
 
-	async fetchSavedTracksJP() {
-		let href = 'https://api.spotify.com/v1/me/tracks'
-		let json = await this.service.fetchJP(href)
-		// TODO Pagination
-		return this.updateSavedTracks(json)
+	fetchSavedTracksJP() {
+		let { savedTrackList } = this
+		if (savedTrackList) {
+			return savedTrackList.fetchJP()
+		} else {
+			savedTrackList = this.savedTrackList = new TrackList()
+			return savedTrackList.fetchInitialPageJP('https://api.spotify.com/v1/me/tracks', this.service)
+		}
 	}
 
 	async fetchTrackFeaturesJP() {
@@ -53,32 +61,18 @@ export default class SpotifyStore  {
 		href += `?ids=${ids.join(',')}`
 		let json = await this.service.fetchJP(href)
 		let features = json.audio_features
-		for (let featureInfo of features) {
-			this.trackMap[featureInfo.id].setFeatures(featureInfo)
-		}
+		this.savedTrackList.mapData(features, 'setFeatures')
 	}
 
 	@action updateUserInfo(userInfo) {
 		this.userInfo = userInfo
 	}
 
-	@action updateSavedTracks(json) {
-		//this.savedTracks = this.savedTracks ?? []
-		let tracks = []
-		for (let item of json.items) {
-			let track = new Track(item.track, item.added_at)
-			tracks.push(track)
-			
-		}
-		this.savedTracks = tracks
-		this._reindex()
-		return this.savedTracks
+	get savedTracks() {
+		return this.savedTrackList?.models ?? []
 	}
 
 	_reindex() {
-		this.trackMap = {}
-		for(let track of this.savedTracks) {
-			this.trackMap[track.id] = track
-		}
+		
 	}
 }

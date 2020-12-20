@@ -12,9 +12,10 @@ class TrackList extends React.Component {
 	columnInfo = {
 		'attributes.name': { title: 'Track Name', width: 370 },
 		albumName: { title: 'Album Name', width: 370 },
-		trackNumber: { title: 'Track Number', width: 200 },
-		id: { title: 'id', width: 300 },
+		trackNumber: { title: 'Track Number', width: 100 },
 		'features.tempo': { title: 'Tempo', width: 60 },
+		'features.danceability': { title: 'Danceability', width: 85 },
+		'features.energy': { title: 'Energy', width: 60 },
 		skip_debug: { title: 'Debug', width: 80 },
 		skip_play: { title: 'Play', width: 80 },
 	}
@@ -28,14 +29,6 @@ class TrackList extends React.Component {
 	constructor(props) {
 		super(props)
 		this.store = props.store
-	}
-
-	onListClicked() {
-		this.store.fetchSavedTracksJP()
-	}
-	
-	onLoadDetailsClicked() {
-		this.store.fetchTrackFeaturesJP()
 	}
 
 	get tracks() {
@@ -102,8 +95,7 @@ class TrackList extends React.Component {
 
 	render() {
 		return <div>
-			<sp-button onClick={ () => this.onListClicked() } variant='primary' >List Saved Tracks</sp-button>
-			<sp-button onClick={ () => this.onLoadDetailsClicked() } variant='primary' >Load Trackinfo</sp-button>
+			
 			<div className={ S.tracks } style={ this.getGridCss() }>
 				{ this.renderTracksHeader() }
 				{ this.renderTracks()}

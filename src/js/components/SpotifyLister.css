@@ -1,5 +1,6 @@
 @value _headerHeight: 200px;
 @value _shadowHeight: 16px;
+@value _playerHeight: 48px;
 
 .root {
 	width: 100%;
@@ -22,9 +23,19 @@
 }
 
 .topControls.withShadow {
-	box-shadow: rgba(0, 0, 0, 0.3) 0px 1px 16px 0px
+	box-shadow: rgba(0, 0, 0, 0.3) 0px 1px 16px 0px;
 }
 
 .content {
 	padding: 20px;
+	margin-bottom: _playerHeight;
+}
+
+.player {
+	width: 100%;
+	position: fixed;
+	height: _playerHeight;
+	left: 0;
+	right: 0;
+    bottom: 0;
 }
