@@ -4,8 +4,10 @@ import request from 'request'
 var express = require('express');
 var router = express.Router();
 
-var client_id = 'ebc0675fa38a42f4889c8ba33b6bb587'; // Your client id
-var client_secret = 'a12fe794dddd41fcb0a3b3a6e725e562'; // Your secret
+
+import config from 'js-yaml-loader!../../config/spotify.yml'
+var client_id = config['dev'].client_id;
+var client_secret = config['dev'].client_secret;
 var redirect_uri = 'http://localhost:8080/callback'; // Your redirect uri
 
 var generateRandomString = function(length) {

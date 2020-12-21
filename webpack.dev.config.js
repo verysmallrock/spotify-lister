@@ -55,6 +55,10 @@ module.exports = merge(common, {
       {
        test: /\.(png|svg|jpg|gif)$/,
        use: ['file-loader']
+      },
+      {
+       test: /\.ya?ml$/,
+       use: 'js-yaml-loader'
       }
     ]
   },
