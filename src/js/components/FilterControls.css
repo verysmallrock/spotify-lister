@@ -1,0 +1,11 @@
+.root {
+	display: flex;
+	flex-direction: column;
+	max-height: 160px;
+	flex-wrap: wrap;
+}
+
+.slider {
+	width: 200px;
+	margin: 0 5px;
+}

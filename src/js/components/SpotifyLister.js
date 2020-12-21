@@ -7,6 +7,7 @@ import { action, makeAutoObservable } from 'mobx'
 import { observer } from 'mobx-react'
 import UserInfoView from './UserInfoView'
 import TrackList from './TrackList'
+import FilterControls from './FilterControls'
 import SpotifyPlayer from 'react-spotify-web-playback'
 
 class WindowState {
@@ -41,7 +42,6 @@ class SpotifyLister extends React.Component {
 		
 		window.spotifystore = this.store
 
-
 		this.windowState = new WindowState()
 		
 		this.setupPlayer()
@@ -55,9 +55,17 @@ class SpotifyLister extends React.Component {
 	onListClicked() {
 		this.store.fetchSavedTracksJP()
 	}
+
+	onLoadAllClicked() {
+		this.store.fetchAllJP()
+	}
 	
 	onLoadDetailsClicked() {
 		this.store.fetchTrackFeaturesJP()
+	}
+	
+	onLoadAllDetailsClicked() {
+		this.store.fetchAllTrackFeaturesJP()
 	}
 
 	get auth() {
@@ -72,6 +80,7 @@ class SpotifyLister extends React.Component {
 		return classes.join(' ')
 	}
 
+	// https://www.npmjs.com/package/react-spotify-web-playback
 	get playerStyles() {
 		return {
 			activeColor: '#fff',
@@ -84,27 +93,49 @@ class SpotifyLister extends React.Component {
 		}
 	}
 
+	getProgressString() {
+		if (this.store.savedTrackList?.total > 0)
+			return `Loaded ${this.store.savedTrackList.models.length} of ${this.store.savedTrackList.total} tracks`
+		else
+			return ''
+	}
+
 	render() {
 		return (
 			<div className={ S.root } >
 				<div className={ this.headerClasses }>
-						<h1>Spotify Lister</h1>
-						<UserInfoView store={ this.store } />
+					<div className={ S.row }>
+						<div className={ S.left }>
+							<h1>Spotify Lister</h1>
+							<UserInfoView store={ this.store } />						
+						</div>
+						<div className={ S.filters }>
+							<FilterControls store={ this.store } />
+						</div>
+					</div>
+					<div className={ S.tools }>
 						<sp-button onClick={ () => this.onListClicked() } variant='primary' >List Saved Tracks</sp-button>
+						<sp-button onClick={ () => this.onLoadAllClicked() } variant='primary' >Load All Saved Tracks</sp-button>
 						<sp-button onClick={ () => this.onLoadDetailsClicked() } variant='primary' >Load Trackinfo</sp-button>
+						<sp-button onClick={ () => this.onLoadAllDetailsClicked() } variant='primary' >Load All Trackinfo</sp-button>
+					<span>{ this.getProgressString() }</span>
 				</div>
+
+				</div>
+				
 				<div className={ S.content }>
 					<TrackList store={ this.store } />
 				</div>
-				<div className={ S.player }>
+				{this.store.playingUris?.length > 0 && <div className={ S.player }>
 					{ this.windowState.playerReady && <SpotifyPlayer 
-						uris={ this.store.playingUris ?? [] } 
+						uris={ this.store.playingUris } 
 						token={ this.auth.access_token } 
 						autoPlay={ true }
 						persistDeviceSelection={ true }
+						magnifySliderOnHover={ true }
 						styles={ this.playerStyles }/> 
 					}
-				</div>
+				</div>}
 			</div>
 		)
 	}

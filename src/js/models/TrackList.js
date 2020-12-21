@@ -1,10 +1,11 @@
-import { observable, makeAutoObservable } from 'mobx'
+import { action, observable, makeAutoObservable } from 'mobx'
 import { persist } from 'mobx-persist'
 import Track from './Track'
 
 export default class TrackList {
 	@persist nextPageLink = ''
 	@persist finished = false
+	@persist total = 0
 
 	@persist('list', Track) @observable models = []
 	@observable modelMap = {}
@@ -33,18 +34,30 @@ export default class TrackList {
 		}
 	}
 
-	async fetchJP() {
+	async fetchAllJP() {
+		while (!this.finished) {
+			await this.fetchJP(false)
+		}
+		this._reindex()
+	}
+
+	async fetchJP(reindex = true) {
 		if (this.finished) {
 			return Promise.resolve()
 		}
 
 		let json = await this.service.fetchJP(this.nextPageLink)
-		this._storeModels(json)
+		this._storeModels(json, reindex)
+		this.total = json.total
 		if (json.next) {
-			this.nextPageLink = json.next
+			this.setNextPageLink(json.next)
 		} else {
 			this.finished = true
 		}
+	}
+
+	@action setNextPageLink(value) {
+		this.nextPageLink = value
 	}
 
 	get(id) {
@@ -58,13 +71,14 @@ export default class TrackList {
 		}
 	}
 
-	_storeModels(json) {
+	_storeModels(json, reindex = true) {
 		let modelClass = Track
 		for (let item of json.items) {
 			let model = new modelClass(item.track, item.added_at)
 			if (!this.modelMap[model.id])
 				this.models.push(model)
 		}
-		this._reindex()
+		if (reindex)
+			this._reindex()
 	}
  }

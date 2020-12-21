@@ -30,8 +30,14 @@ export default class Track  {
 		let selectors = selector.split('.')
 		let value = this
 		for (let prop of selectors) {
+			if (Array.isArray(value)) {
+				value = value.map((v) => v[prop])
+				value = value.join(',')
+				break
+			}
 			value = value[prop]
 		}
+		
 		return value
 	}
 }

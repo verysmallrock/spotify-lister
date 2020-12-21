@@ -1,23 +1,27 @@
 import { observable, action, makeAutoObservable } from 'mobx'
 import { create, persist } from 'mobx-persist'
+import localForage from 'localforage'
 import TrackList from './TrackList'
+import FilterStore from './FilterStore'
 
 const hydrate = create({
-	storage: localStorage,
+	storage: localForage,
 	jsonify: true,
-	debounce: 500
+	debounce: 1000
 })
 
 export default class SpotifyStore  {
 	@persist('object') @observable userInfo = {}
 	@persist('object', TrackList) savedTrackList = null
+	filter = new FilterStore()
 
 	playingUris = []
 
 	constructor(service) {
 		makeAutoObservable(this)
 		this.service = service // SpotifyService
-		this.init()
+
+		setTimeout(() => { this.init() }, 500)
 	}
 
 	playUri(uri) {
@@ -40,28 +44,46 @@ export default class SpotifyStore  {
 		return this.userInfo
 	}
 
-	fetchSavedTracksJP() {
+	async fetchPage() {
 		let { savedTrackList } = this
 		if (savedTrackList) {
 			return savedTrackList.fetchJP()
 		} else {
 			savedTrackList = this.savedTrackList = new TrackList()
-			return savedTrackList.fetchInitialPageJP('https://api.spotify.com/v1/me/tracks', this.service)
+			return savedTrackList.fetchInitialPageJP('https://api.spotify.com/v1/me/tracks?limit=50', this.service)
 		}
+	}
+
+	fetchSavedTracksJP() {
+		this.fetchPage()
+	}
+	
+	async fetchAllJP() {
+		await this.fetchPage() // init
+		this.savedTrackList.fetchAllJP()
 	}
 
 	async fetchTrackFeaturesJP() {
 		let href = 'https://api.spotify.com/v1/audio-features'
 		let ids = []
 		for (let track of this.savedTracks) {
+			if (Object.keys(track.features).length > 3) { continue }
 			if (ids.length >= 100) { break }
 			ids.push(track.id)
 		}
 
+		if (ids.length == 0) { return false }
 		href += `?ids=${ids.join(',')}`
 		let json = await this.service.fetchJP(href)
 		let features = json.audio_features
 		this.savedTrackList.mapData(features, 'setFeatures')
+		return true
+	}
+
+	async fetchAllTrackFeaturesJP() {
+		while (await this.fetchTrackFeaturesJP()) {
+			// loop until it returns false
+		}
 	}
 
 	@action updateUserInfo(userInfo) {
@@ -69,7 +91,12 @@ export default class SpotifyStore  {
 	}
 
 	get savedTracks() {
-		return this.savedTrackList?.models ?? []
+		let models = this.savedTrackList?.models ?? []
+		if (this.filter.enabled) {
+			return models.filter((model) => this.filter.filterFunc(model))
+		} else {
+			return models
+		}
 	}
 
 	_reindex() {

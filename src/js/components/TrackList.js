@@ -10,12 +10,16 @@ import S from './TrackList.css'
 class TrackList extends React.Component {
 	
 	columnInfo = {
-		'attributes.name': { title: 'Track Name', width: 370 },
-		albumName: { title: 'Album Name', width: 370 },
-		trackNumber: { title: 'Track Number', width: 100 },
+		'attributes.name': { title: 'Track Name', width: 270 },
+		albumName: { title: 'Album Name', width: 270 },
+		'attributes.artists.name': { title: 'Artist', width: 180 },
 		'features.tempo': { title: 'Tempo', width: 60 },
 		'features.danceability': { title: 'Danceability', width: 85 },
 		'features.energy': { title: 'Energy', width: 60 },
+		'features.valence': { title: 'Valence', width: 60 },
+		'features.speechiness': { title: 'Speechiness', width: 80 },
+		'features.loudness': { title: 'Loudness', width: 60 },
+		
 		skip_debug: { title: 'Debug', width: 80 },
 		skip_play: { title: 'Play', width: 80 },
 	}
