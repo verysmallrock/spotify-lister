@@ -1,8 +1,7 @@
-import '@spectrum-web-components/button/sp-button'
+import { Table } from  "af-virtual-scroll";
 import React from 'react'
 import PropTypes from 'prop-types'
 import { observer } from 'mobx-react'
-import TrackInfo from './TrackInfo'
 import S from './TrackList.css'
 
 
@@ -39,16 +38,8 @@ class TrackList extends React.Component {
 		return this.store?.savedTracks ?? []
 	}
 
-	renderTracksHeader() {
-		let { columnInfo } = this
-		let columns = []
-		for (let key of Object.keys(columnInfo)) {
-			if (key.startsWith('skip_')) { continue }
-			columns.push(<span key={ key }>{ columnInfo[key].title }</span>)
-		}
-		columns.push(<span key='debug'>Debug</span>)
-		columns.push(<span key='play'>Play</span>)
-		return columns
+	playTrack(track) {
+		this.store.playUri(track.attributes.uri)
 	}
 
 	renderTracks() {
@@ -58,7 +49,8 @@ class TrackList extends React.Component {
 		for (let key of Object.keys(columnInfo)) {
 			columns.push({
 				dataKey: key,
-				label: columnInfo[key].title
+				label: columnInfo[key].title,
+				width: columnInfo[key].width
 			})
 		}
 
@@ -66,45 +58,30 @@ class TrackList extends React.Component {
 			let data = {}
 		
 			for (let key of Object.keys(columnInfo)) {
-				data[key] = this.tracks[index].getValue(key)
+				if (key == 'skip_debug') {
+					data[key] = <sp-button key={ `debug_${this.index}`} onClick={ () => console.log( this.tracks[index]) } variant='primary'>Log</sp-button> // eslint-disable-line no-console
+				} else if (key == 'skip_play') {
+					data[key] = <sp-button key={ `play_${this.index}`} onClick={ () => this.playTrack(this.tracks[index]) } variant='primary'>Play</sp-button>
+				}
+				else {
+					data[key] = this.tracks[index].getValue(key)
+				}
 			}
 			return data
 		}
 
-		let list = []
-		this.tracks.forEach((track, index) => {
-			list.push(<TrackInfo key={track.id} 
-				store={ this.store }
-				index={ index }
-				trackInfo={ track } 
-				columnInfo={ columnInfo }
-				getDataFunc={ getRowData }
-			/>)
-		})
-		return list
-	}
-
-	getGridCss() {
-		//grid-template-columns: 370px 200px 300px 60px 80px;
-		let { columnInfo } = this
-		let widths = []
-		for (let key of Object.keys(columnInfo)) {
-			widths.push(`${columnInfo[key].width}px`)
-		}
-
-		return {
-			'gridTemplateColumns': widths.join(' ')
-		}
+		return <Table
+			fixed
+			className={ S.tracks } 
+			rowsQuantity={ this.tracks.length }
+			estimatedRowHeight={ 40 }
+			getRowData={ getRowData }
+			columns={ columns }
+		/>
 	}
 
 	render() {
-		return <div>
-			
-			<div className={ S.tracks } style={ this.getGridCss() }>
-				{ this.renderTracksHeader() }
-				{ this.renderTracks()}
-			</div>
-		</div>
+		return this.renderTracks()
 	}
 }
 

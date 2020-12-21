@@ -35,25 +35,41 @@ export default class TrackList {
 	}
 
 	async fetchAllJP() {
+		let newModels = []
 		while (!this.finished) {
-			await this.fetchJP(false)
+			newModels = newModels.concat(await this.fetchJP(false))
 		}
+		this._addModels(newModels)
+	}
+
+	@action _addModels(models) {
+		let newModels = []
+		for (let model of models) {
+			if (!this.modelMap[model.id])
+				newModels.push(model)
+		}
+		this.models = this.models.concat(newModels)
 		this._reindex()
 	}
 
-	async fetchJP(reindex = true) {
+	async fetchJP(asObservable = true) {
 		if (this.finished) {
 			return Promise.resolve()
 		}
 
 		let json = await this.service.fetchJP(this.nextPageLink)
-		this._storeModels(json, reindex)
-		this.total = json.total
+		let newModels = this._storeModels(json, asObservable)
+		this.updateTotal(json.total)
 		if (json.next) {
 			this.setNextPageLink(json.next)
 		} else {
 			this.finished = true
 		}
+		return newModels
+	}
+
+	@action updateTotal(total) {
+		this.total = total
 	}
 
 	@action setNextPageLink(value) {
@@ -71,14 +87,15 @@ export default class TrackList {
 		}
 	}
 
-	_storeModels(json, reindex = true) {
+	_storeModels(json, asObservable = true) {
 		let modelClass = Track
+		let newModels = []
 		for (let item of json.items) {
 			let model = new modelClass(item.track, item.added_at)
-			if (!this.modelMap[model.id])
-				this.models.push(model)
+			newModels.push(model)
 		}
-		if (reindex)
-			this._reindex()
+		if (asObservable)
+			this._addModels(newModels)
+		return newModels
 	}
  }

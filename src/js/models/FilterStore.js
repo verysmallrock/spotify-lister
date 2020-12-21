@@ -5,7 +5,7 @@ export default class FilterStore  {
 
 	filters = {
 		tempo: { title: 'Tempo', minSlider: 40, maxSlider: 200, minDefault: 85, maxDefault: 95},
-		loudness: { title: 'Loudness', minSlider: -20, maxSlider: 0, minDefault: -8, maxDefault: 0},
+		loudness: { title: 'Loudness', minSlider: -20, maxSlider: 0, minDefault: -8.5, maxDefault: 0},
 		danceability: { title: 'Danceability', minSlider: 0, maxSlider: 1, minDefault: 0.5, maxDefault: 1, step: 0.1},
 	}
 

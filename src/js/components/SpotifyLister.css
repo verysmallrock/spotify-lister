@@ -48,8 +48,10 @@
 }
 
 .content {
-	padding: 20px;
+	padding: 0 0 0 20px;
 	margin-bottom: _playerHeight;
+	display: flex;
+	height: calc(100% - _headerHeight - _playerHeight);
 }
 
 .player {

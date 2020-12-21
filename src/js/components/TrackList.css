@@ -1,4 +1,11 @@
-.tracks {
-	display: grid;
-    grid-gap: 5px;
+.tracks thead th {
+	background-color: var(--spectrum-global-color-gray-100);
+	padding: 10px 0;
+}
+
+.tracks tbody tr td {
+	max-width: 120px;
+	white-space: nowrap;
+  	overflow: hidden;
+	text-overflow: ellipsis;
 }

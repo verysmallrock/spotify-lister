@@ -1,5 +1,4 @@
 import React from 'react'
-import '@spectrum-web-components/button/sp-button'
 
 export default class SigninView extends React.Component {
   render() {

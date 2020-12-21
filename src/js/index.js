@@ -1,6 +1,7 @@
 import React from 'react'
 import ReactDOM from 'react-dom'
 import ApplicationFrame from './components/ApplicationFrame'
+import '@spectrum-web-components/button/sp-button'
 import './index.css'
 
 let reactElement = document.getElementById('react-container') // eslint-disable-line no-undef

@@ -1,1 +1,12 @@
-@import '~@spectrum-web-components/styles/all-medium-dark.css'
+@import '~@spectrum-web-components/styles/all-medium-dark.css';
+@import '~af-virtual-scroll/lib/style.css';
+
+:global(#react-container) { 
+    display: flex;
+    overflow: hidden;
+}
+
+:global(#react-container), body, html {
+	height:100%;
+	overflow:hidden;
+}

@@ -46,8 +46,11 @@ module.exports = merge(common, {
             loader: 'css-loader', 
             options: { 
               modules:  { 
-                mode: 'local',
-                localIdentName: '[name]_[local]--[hash:base64:5]'
+                localIdentName: '[name]_[local]--[hash:base64:5]',
+                mode: (resourcePath) => {
+                  let globalStyles = ['af-virtual-scroll'];
+                  return globalStyles.some(globalFile => resourcePath.includes(globalFile)) ? 'global' : 'local'
+                }
               }
             } 
           } ]
