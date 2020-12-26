@@ -35,7 +35,7 @@ class TrackList extends React.Component {
 	}
 
 	get tracks() {
-		return this.store?.savedTracks ?? []
+		return this.store?.currentTracks ?? []
 	}
 
 	playTrack(track) {

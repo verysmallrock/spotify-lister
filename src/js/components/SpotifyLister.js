@@ -52,12 +52,12 @@ class SpotifyLister extends React.Component {
 		this.windowState.playerReady = true
 	}
 
-	onListClicked() {
+	onLoadTracksClicked() {
 		this.store.fetchSavedTracksJP()
 	}
 
-	onLoadAllClicked() {
-		this.store.fetchAllJP()
+	onLoadAlbumsClicked() {
+		this.store.fetchSavedAlbumsJP()
 	}
 	
 	onLoadDetailsClicked() {
@@ -94,10 +94,14 @@ class SpotifyLister extends React.Component {
 	}
 
 	getProgressString() {
-		if (this.store.savedTrackList?.total > 0)
-			return `Loaded ${this.store.savedTrackList.models.length} of ${this.store.savedTrackList.total} tracks`
-		else
-			return ''
+		let str = ''
+		if (this.store.tracks.loadedCount > 0)
+			str += `Loaded ${this.store.tracks.loadedCount} of ${this.store.tracks.total} tracks`
+		if (this.store.albums.loadedCount > 0)
+			str += `, Loaded ${this.store.albums.loadedCount} of ${this.store.albums.total} albums`
+		
+		str += `, showing ${this.store.currentTracks.length} tracks`
+		return str
 	}
 
 	render() {
@@ -114,10 +118,9 @@ class SpotifyLister extends React.Component {
 						</div>
 					</div>
 					<div className={ S.tools }>
-						<sp-button onClick={ () => this.onListClicked() } variant='primary' >List Saved Tracks</sp-button>
-						<sp-button onClick={ () => this.onLoadAllClicked() } variant='primary' >Load All Saved Tracks</sp-button>
-						<sp-button onClick={ () => this.onLoadDetailsClicked() } variant='primary' >Load Trackinfo</sp-button>
-						<sp-button onClick={ () => this.onLoadAllDetailsClicked() } variant='primary' >Load All Trackinfo</sp-button>
+						<sp-button onClick={ () => this.onLoadTracksClicked() } variant='primary' >Load Saved Tracks</sp-button>
+						<sp-button onClick={ () => this.onLoadAllDetailsClicked() } variant='primary' >Load Trackinfo</sp-button>
+						<sp-button onClick={ () => this.onLoadAlbumsClicked() } variant='primary' >Load Albums</sp-button>
 					<span>{ this.getProgressString() }</span>
 				</div>
 

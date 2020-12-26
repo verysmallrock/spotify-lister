@@ -6,6 +6,7 @@ export default class TrackList {
 	@persist nextPageLink = ''
 	@persist finished = false
 	@persist total = 0
+	@persist loadedCount = 0
 
 	@persist('list', Track) @observable models = []
 	@observable modelMap = {}
@@ -59,6 +60,7 @@ export default class TrackList {
 
 		let json = await this.service.fetchJP(this.nextPageLink)
 		let newModels = this._storeModels(json, asObservable)
+		this.loadedCount += newModels.length
 		this.updateTotal(json.total)
 		if (json.next) {
 			this.setNextPageLink(json.next)
