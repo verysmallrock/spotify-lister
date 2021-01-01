@@ -13,28 +13,10 @@ class TopControls extends React.Component {
 		this.store = props.store
 	}
 
-	onLoadTracksClicked() {
-		this.store.fetchSavedTracksJP()
-	}
-
-	onLoadAlbumsClicked() {
-		this.store.fetchSavedAlbumsJP()
-	}
-	
-	onLoadDetailsClicked() {
-		this.store.fetchTrackFeaturesJP()
-	}
-	
-	onLoadAllDetailsClicked() {
-		this.store.fetchAllTrackFeaturesJP()
-	}
-
 	onTabChange(e, newTab) {
 		let state = this.store.uiState
 		let d = Date.now()
-		console.log('hey', d);
 		state.setSelectedTab(newTab)
-		console.log('hey', Date.now() - d);
 	}
 
 
@@ -44,17 +26,6 @@ class TopControls extends React.Component {
 			classes.push( S.withShadow )
 		}
 		return classes.join(' ')
-	}
-
-	getProgressString() {
-		let str = ''
-		if (this.store.tracks.loadedCount > 0)
-			str += `Loaded ${this.store.tracks.loadedCount} of ${this.store.tracks.total} saved tracks`
-		if (this.store.albums.loadedCount > 0)
-			str += `, Loaded ${this.store.albums.loadedCount} of ${this.store.albums.total} albums`
-		
-		str += `, showing ${this.store.currentTracks.length} tracks`
-		return str
 	}
 
 	renderTabs() {
@@ -84,12 +55,6 @@ class TopControls extends React.Component {
 			<div className={ S.filters }>
 				<FilterControls store={ this.store } />
 			</div>
-		</div>
-		<div className={ S.tools }>
-			<sp-button onClick={ () => this.onLoadTracksClicked() } variant='primary' >Load Saved Tracks</sp-button>
-			<sp-button onClick={ () => this.onLoadAllDetailsClicked() } variant='primary' >Load Trackinfo</sp-button>
-			<sp-button onClick={ () => this.onLoadAlbumsClicked() } variant='primary' >Load Albums</sp-button>
-			<span>{ this.getProgressString() }</span>
 		</div>
 
 		{ this.renderTabs() }

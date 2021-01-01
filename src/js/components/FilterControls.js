@@ -56,6 +56,8 @@ class FilterControls extends React.Component {
 			{ this.renderSlider('tempo') }
 			{ this.renderSlider('loudness') }
 			{ this.renderSlider('danceability') }
+			{ this.renderSlider('valence') }
+			{ this.renderSlider('speechiness') }
 			
 			
 		</div>

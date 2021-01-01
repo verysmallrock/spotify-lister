@@ -1,11 +1,12 @@
 import { action, makeAutoObservable, observable } from 'mobx'
 import { create, persist } from 'mobx-persist'
 import localForage from 'localforage'
-import PagedList from './PagedList'
+import PagedList from './service/PagedList'
 import FilterStore from './FilterStore'
 import TrackStore from './TrackStore'
 import AlbumStore from './AlbumStore'
 import PlaylistStore from './PlaylistStore'
+import Playlist from './service/Playlist'
 
 const hydrate = create({
 	storage: localForage,
@@ -84,6 +85,11 @@ export default class SpotifyStore  {
 
 	get playingUris() {
 		return this.uiState.playingUris
+	}
+
+	savePlaylistJP() {
+		let playlist = new Playlist(this, this.service, this.playlist)
+		return playlist.saveJP()
 	}
 
 	async init() {

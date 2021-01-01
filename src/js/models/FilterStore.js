@@ -23,7 +23,9 @@ let allFilters = {
 let filters = {
 	tempo: allFilters.tempo,
 	loudness: allFilters.loudness,
-	danceability: allFilters.danceability
+	danceability: allFilters.danceability,
+	valence: allFilters.valence,
+	speechiness: allFilters.speechiness
 }
 
 // TODO: 

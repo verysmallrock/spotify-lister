@@ -1,13 +1,22 @@
 import React from 'react'
 import { action, makeAutoObservable } from 'mobx'
 import PropTypes from 'prop-types'
+import { createMuiTheme } from '@material-ui/core/styles'
+import { ThemeProvider } from '@material-ui/styles'
 import S from './SpotifyLister.css'
 import SpotifyService from '../models/service/SpotifyService'
 import SpotifyStore from '../models/SpotifyStore'
 import { observer } from 'mobx-react'
 import TopControls from './TopControls'
+import TabControls from './TabControls'
 import TrackList from './TrackList'
 import SpotifyPlayer from 'react-spotify-web-playback'
+
+const darkTheme = createMuiTheme({
+	palette: {
+	  type: 'dark',
+	},
+  })
 
 class WindowState {
 	scrolledDown = false
@@ -69,11 +78,12 @@ class SpotifyLister extends React.Component {
 	}
 
 	render() {
-		return (
+		return (<ThemeProvider theme={ darkTheme } >
 			<div className={ S.root } >
 				<TopControls store={ this.store }/>
 				
-				<div className={ S.content }>
+				<TabControls store={ this.store } />
+				<div className={ S.content }>					
 					<TrackList store={ this.store } />
 				</div>
 				{this.store.playingUris?.length > 0 && <div className={ S.player }>
@@ -88,7 +98,7 @@ class SpotifyLister extends React.Component {
 				</div>
 			}
 			</div>
-		)
+		</ThemeProvider>)
 	}
 }
 

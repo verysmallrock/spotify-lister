@@ -8,6 +8,8 @@ export default class Album  {
 	@persist @observable addedAt = ''
 	@persist @observable id = ''
 
+	trackMap = {}
+
 	constructor(attributes = {}, addedAt = '') {
 		makeAutoObservable(this)
 		this.attributes = attributes
