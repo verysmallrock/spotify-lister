@@ -13,7 +13,7 @@ export default class PagedList {
 
 	mapData(dataArray, mapFuncName) {
 		for (let data of dataArray) {
-			let model = this.store.modelMap[data.id]
+			let model = this.store.get(data.id)
 			if (model && model[mapFuncName]) {
 				model[mapFuncName](data)
 			}
@@ -45,10 +45,6 @@ export default class PagedList {
 			this.store.setFinished(true)
 		}
 		return newModels
-	}
-
-	get(id) {
-		return this.store.modelMap[id]
 	}
 
 	_storeModels(json, asObservable = true) {

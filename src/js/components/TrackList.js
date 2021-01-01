@@ -1,9 +1,8 @@
 import { Table } from  "af-virtual-scroll";
 import React from 'react'
 import PropTypes from 'prop-types'
-import { observer } from 'mobx-react'
+import { observer, Observer } from 'mobx-react'
 import S from './TrackList.css'
-
 
 @observer
 class TrackList extends React.Component {
@@ -19,8 +18,9 @@ class TrackList extends React.Component {
 		'features.speechiness': { title: 'Speechiness', width: 80 },
 		'features.loudness': { title: 'Loudness', width: 60 },
 		
-		skip_debug: { title: 'Debug', width: 80 },
-		skip_play: { title: 'Play', width: 80 },
+		btn_debug: { title: 'Debug', width: 80 },
+		btn_play: { title: 'Play', width: 80 },
+		btn_add: { title: 'Playlist', width: 80 },
 	}
 
 	static get propTypes() {
@@ -42,6 +42,30 @@ class TrackList extends React.Component {
 		this.store.playUri(track.attributes.uri)
 	}
 
+	didClickPlaylistButton(track) {
+		if(this.store.playlist.get(track.id) == null) {
+			this.store.playlist.addTrack(track)
+		} else {
+			this.store.playlist.removeTrack(track)
+		}
+	}
+	
+	getPlaylistButtonText(track) {
+		if(this.store.playlist.get(track.id) == null) {
+			return 'Add'
+		} else {
+			return 'Remove'
+		}
+	}
+
+	getPlayButtonText(track) {
+		if(this.store.isPlaying(track.attributes.uri)) {
+			return 'Playing'
+		} else {
+			return 'Play'
+		}
+	}
+
 	renderTracks() {
 		let { columnInfo } = this
  
@@ -56,15 +80,18 @@ class TrackList extends React.Component {
 
 		let getRowData = (index) => {
 			let data = {}
-		
+			let track = this.tracks[index]
 			for (let key of Object.keys(columnInfo)) {
-				if (key == 'skip_debug') {
-					data[key] = <sp-button key={ `debug_${this.index}`} onClick={ () => console.log( this.tracks[index]) } variant='primary'>Log</sp-button> // eslint-disable-line no-console
-				} else if (key == 'skip_play') {
-					data[key] = <sp-button key={ `play_${this.index}`} onClick={ () => this.playTrack(this.tracks[index]) } variant='primary'>Play</sp-button>
+				if (key == 'btn_debug') {
+					data[key] = <sp-button key={ `debug_${this.index}`} onClick={ () => console.log(track) } variant='primary'>Log</sp-button> // eslint-disable-line no-console
+				} else if (key == 'btn_play') {
+					data[key] = <Observer>{ () => <sp-button key={ `play_${this.index}`} onClick={ () => this.playTrack(track) } variant='primary'>{ this.getPlayButtonText(track) }</sp-button> }</Observer>
+				}
+				else if (key == 'btn_add') {
+					data[key] = <Observer>{ () => <sp-button key={ `add_${this.index}`} onClick={ () => this.didClickPlaylistButton(track) } variant='primary'>{ this.getPlaylistButtonText(track) }</sp-button> }</Observer>
 				}
 				else {
-					data[key] = this.tracks[index].getValue(key)
+					data[key] = track.getValue(key)
 				}
 			}
 			return data

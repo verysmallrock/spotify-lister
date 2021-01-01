@@ -8,6 +8,10 @@ TBD
 
     yarn install
 
+## Quickstart for development
+
+    yarn run dev
+
 ## Create a Development build
 
     yarn run buildDev

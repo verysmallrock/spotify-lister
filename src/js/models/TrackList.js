@@ -9,7 +9,6 @@ export default class TrackList {
 	@persist loadedCount = 0
 
 	@persist('list', Track) @observable models = []
-	@observable modelMap = {}
 
 	constructor() {
 		makeAutoObservable(this)
@@ -28,7 +27,7 @@ export default class TrackList {
 
 	mapData(dataArray, mapFuncName) {
 		for (let data of dataArray) {
-			let model = this.modelMap[data.id]
+			let model = this.get(data.id)
 			if (model && model[mapFuncName]) {
 				model[mapFuncName](data)
 			}
@@ -46,7 +45,7 @@ export default class TrackList {
 	@action _addModels(models) {
 		let newModels = []
 		for (let model of models) {
-			if (!this.modelMap[model.id])
+			if (this.get(model.id) == null)
 				newModels.push(model)
 		}
 		this.models = this.models.concat(newModels)
@@ -79,13 +78,14 @@ export default class TrackList {
 	}
 
 	get(id) {
-		return this.modelMap[id]
+		return this.models[this.modelMap[id]]
 	}
 
 	_reindex() {
 		this.modelMap = {}
+		let index = 0
 		for (let model of this.models) {
-			this.modelMap[model.id] = model
+			this.modelMap[model.id] = index++
 		}
 	}
 

@@ -1,0 +1,36 @@
+@value _shadowHeight: 16px;
+
+.root {
+	padding: 10px;
+	box-sizing: border-box;
+	position: sticky;
+	top: 0;
+	left: 0;
+	right: 0;
+	background-color: var(--spectrum-global-color-gray-100);
+	z-index: 1;
+	
+	height: _headerHeight;
+	padding: 10px;
+	width: 100%;	
+}
+
+.root.withShadow {
+	box-shadow: rgba(0, 0, 0, 0.3) 0px 1px 16px 0px;
+}
+
+.root .left {
+	width: 320px;
+}
+
+.root .filters {
+	width: calc(100% - 120px);
+}
+
+.root .filters sp-slider {
+	width: 160px;
+}
+
+.row {
+	display: flex;
+}

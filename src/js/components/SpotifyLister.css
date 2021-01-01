@@ -1,46 +1,9 @@
-@value _headerHeight: 200px;
-@value _shadowHeight: 16px;
+@value _headerHeight: 240px;
 @value _playerHeight: 48px;
 
 .root {
 	width: 100%;
 	height: 100%;
-}
-
-.topControls {
-	padding: 10px;
-	box-sizing: border-box;
-	position: sticky;
-	top: 0;
-	left: 0;
-	right: 0;
-	background-color: var(--spectrum-global-color-gray-100);
-	z-index: 1;
-	
-	height: _headerHeight;
-	padding: 10px;
-	width: 100%;	
-}
-
-.row {
-	display: flex;
-}
-
-.topControls.withShadow {
-	box-shadow: rgba(0, 0, 0, 0.3) 0px 1px 16px 0px;
-}
-
-.topControls .left {
-	width: 320px;
-}
-
-.topControls .filters {
-	
-	width: calc(100% - 120px);
-}
-
-.topControls .filters sp-slider {
-	width: 160px;
 }
 
 .tools {
