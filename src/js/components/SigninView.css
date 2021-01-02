@@ -1,0 +1,12 @@
+.root {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+  text-align: center;
+}
+
+.root h1 {
+  font-size: 32px;
+  margin: 14px 0;
+}
