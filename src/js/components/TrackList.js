@@ -2,6 +2,7 @@ import { Table } from  "af-virtual-scroll";
 import React from 'react'
 import PropTypes from 'prop-types'
 import { observer, Observer } from 'mobx-react'
+import AppSettings from '../utils/AppSettings'
 import S from './TrackList.css'
 
 @observer
@@ -71,6 +72,8 @@ class TrackList extends React.Component {
  
 		let columns = []
 		for (let key of Object.keys(columnInfo)) {
+			if (key == 'btn_debug' && AppSettings.isProd())
+				continue
 			columns.push({
 				dataKey: key,
 				label: columnInfo[key].title,
@@ -82,7 +85,7 @@ class TrackList extends React.Component {
 			let data = {}
 			let track = this.tracks[index]
 			for (let key of Object.keys(columnInfo)) {
-				if (key == 'btn_debug') {
+				if (key == 'btn_debug' && AppSettings.isDev()) {
 					data[key] = <sp-button key={ `debug_${this.index}`} onClick={ () => console.log(track) } variant='primary'>Log</sp-button> // eslint-disable-line no-console
 				} else if (key == 'btn_play') {
 					data[key] = <Observer>{ () => <sp-button key={ `play_${this.index}`} onClick={ () => this.playTrack(track) } variant='primary'>{ this.getPlayButtonText(track) }</sp-button> }</Observer>
