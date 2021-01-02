@@ -1,12 +1,19 @@
 import path from 'path'
 import express from 'express'
+import cors from 'cors'
+import cookieParser from 'cookie-parser'
+import auth from './routes/auth'
 
 const app = express(),
             DIST_DIR = __dirname,
             HTML_FILE = path.join(DIST_DIR, 'index.html')
 
 
+app.use(cors())
+    .use(cookieParser())   
 app.use(express.static(DIST_DIR))
+
+app.use(auth)
 
 app.get('*', (req, res) => {
     res.sendFile(HTML_FILE)

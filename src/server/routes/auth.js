@@ -5,10 +5,20 @@ var express = require('express');
 var router = express.Router();
 
 
-import config from 'js-yaml-loader!../../config/spotify.yml'
-var client_id = config['dev'].client_id;
-var client_secret = config['dev'].client_secret;
-var redirect_uri = 'http://localhost:8080/callback'; // Your redirect uri
+import config from 'js-yaml-loader!../../config/spotify.yml' // only used in dev
+var client_id, client_secret, redirect_uri;
+
+if (process.env.ENV == 'production') {
+	console.log('running PRODUCTION')
+	redirect_uri = 'https://spotify-song-finder.herokuapp.com/callback'
+	client_id = process.env.spotify_client_id
+	client_secret = process.env.spotify_client_secret
+} else {
+	redirect_uri = 'http://localhost:8080/callback'
+	console.log('running DEVELOPMENT')
+	client_id = config['dev'].client_id;
+	client_secret = config['dev'].client_secret;
+}
 
 var generateRandomString = function(length) {
 	var text = '';

@@ -6,7 +6,7 @@ const OptimizeCSSAssetsPlugin = require('optimize-css-assets-webpack-plugin');
 
 module.exports = {
   entry: {
-    main: './src/js/index.js'
+    main: ['babel-polyfill', './src/js/index.js']
   },
   output: {
     path: path.join(__dirname, 'dist'),
@@ -53,11 +53,23 @@ module.exports = {
         test: /\.jpg$/,
         use: [{loader: 'url-loader'}]
       },
-      {
-        // Loads CSS into a file when you import it via Javascript
-        // Rules are set in MiniCssExtractPlugin
+      { 
         test: /\.css$/,
-        use: [MiniCssExtractPlugin.loader, 'css-loader']
+        use: [          
+          'style-loader', 
+          { 
+            loader: 'css-loader', 
+            options: { 
+              modules:  { 
+                localIdentName: '[name]_[local]--[hash:base64:5]',
+                mode: (resourcePath) => {
+                  let globalStyles = ['af-virtual-scroll'];
+                  return globalStyles.some(globalFile => resourcePath.includes(globalFile)) ? 'global' : 'local'
+                }
+              }
+            } 
+          } 
+        ]
       },
     ]
   },
