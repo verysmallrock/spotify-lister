@@ -80,9 +80,9 @@ export default class FilterStore  {
 			let camel = key.charAt(0).toUpperCase() + key.slice(1)
 			let minProp = `min${camel}`
 			let maxProp = `max${camel}`
-			if (value < filter.minSlider || value > filter.maxSlider) 
+			if (value <= filter.minSlider || value >= filter.maxSlider) 
 				return false
-			if (value < this[minProp] || value > this[maxProp]) 
+			if (value <= this[minProp] || value >= this[maxProp]) 
 				return false
 		}
 	

@@ -1,5 +1,6 @@
 @value _headerHeight: 240px;
 @value _playerHeight: 48px;
+@value _tabControlsHeight: 30px;
 
 .root {
 	width: 100%;
@@ -10,7 +11,7 @@
 	padding: 0 0 0 20px;
 	margin-bottom: _playerHeight;
 	display: flex;
-	height: calc(100% - _headerHeight - _playerHeight);
+	height: calc(100% - _headerHeight - _playerHeight - _tabControlsHeight);
 }
 
 .player {

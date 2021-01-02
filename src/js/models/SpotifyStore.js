@@ -156,10 +156,18 @@ export default class SpotifyStore  {
 			return this.playlist.models
 		}
 		else {
+			let trackMap = {}
 			let tracks = this.tracks?.models ?? []
+			for (let track of tracks) {
+				trackMap[track.id] = true
+			}
 			let albumTracks = []
 			for (let album of this.albums.models)
-				albumTracks = albumTracks.concat(album.tracks)
+				for (let track of album.tracks)
+					if(!trackMap[track.id]) {
+						trackMap[track.id] = true
+						albumTracks.push(track)
+					}
 
 			let models = tracks.concat(albumTracks)
 			if (this.filter.enabled) {
