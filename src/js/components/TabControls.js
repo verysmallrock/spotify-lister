@@ -38,6 +38,10 @@ class TabControls extends React.Component {
 		this.store.playlist.setName(e.target.value)
 	}
 
+	onSearchChange(e) {
+		this.store.uiState.setSearchText(e.target.value)
+	}
+
 	getProgressString() {
 		let str = ''
 		if (this.store.tracks.loadedCount > 0)
@@ -52,6 +56,7 @@ class TabControls extends React.Component {
 	render() {
 		if (this.store.uiState.selectedTab == 'tracks') {
 			return <div className={ S.root }>
+				<TextField id='track-search' label='Search' defaultValue={ this.store.uiState.searchText } onChange={ (e) => this.onSearchChange(e) } />
 				<sp-button onClick={ () => this.onLoadTracksClicked() } variant='primary' >Load Saved Tracks</sp-button>
 				<sp-button onClick={ () => this.onLoadAllDetailsClicked() } variant='primary' >Load Trackinfo</sp-button>
 				<sp-button onClick={ () => this.onLoadAlbumsClicked() } variant='primary' >Load Albums</sp-button>

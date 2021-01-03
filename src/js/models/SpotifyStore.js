@@ -19,6 +19,7 @@ class UIState {
 	@persist('object', PlaylistStore) playlist = new PlaylistStore()
 	@persist('object', RecommendationStore) recommendations = new RecommendationStore()
 	@persist selectedTab = 'tracks'
+	searchText = ''
 
 	tabs = {
 		tracks: {
@@ -50,6 +51,10 @@ class UIState {
 
 	@action playUri(uri) {
 		this.playingUris = [ uri ]
+	}
+
+	@action setSearchText(text) {
+		this.searchText = text
 	}
 
 	isPlaying(uri) {
@@ -134,7 +139,7 @@ export default class SpotifyStore  {
 		this.savedAlbumsList.fetchAllJP()
 	}
 
-	async fetchTrackFeaturesJP(tracks = this.currentTracks) {
+	async fetchTrackFeaturesJP(tracks = this.currentTracks, recommendationsOnly = false) {
 		let href = 'https://api.spotify.com/v1/audio-features'
 		let ids = []
 		for (let track of tracks) {
@@ -147,9 +152,13 @@ export default class SpotifyStore  {
 		href += `?ids=${ids.join(',')}`
 		let json = await this.service.fetchJP(href)
 		let features = json.audio_features
-		this.savedTracksList.mapData(features, 'setFeatures')
-		this.recommendedTracksList.mapData(features, 'setFeatures')
-		this.albums.setTrackFeatures(features)
+		if (recommendationsOnly)
+			this.recommendedTracksList.mapData(features, 'setFeatures')
+		else {
+			this.savedTracksList.mapData(features, 'setFeatures')
+			this.recommendedTracksList.mapData(features, 'setFeatures')
+			this.albums.setTrackFeatures(features)
+		}
 		return true
 	}
 
@@ -163,7 +172,7 @@ export default class SpotifyStore  {
 		this.uiState.recommendations.reset()
 		this.uiState.recommendations.setSeedTrack(track)		
 		await this.recommendedTracksList.fetchJP()
-		this.fetchTrackFeaturesJP(this.uiState.recommendations.models)
+		this.fetchTrackFeaturesJP(this.uiState.recommendations.models, true)
 	}
 
 	@action updateUserInfo(userInfo) {
@@ -172,11 +181,12 @@ export default class SpotifyStore  {
 
 	get currentTracks() {
 		let uiState = this.uiState
+		let result = null
 		if (uiState.selectedTab == 'playlist') {
-			return this.playlist.models
+			result = this.playlist.models
 		}
 		else if (uiState.selectedTab == 'similar') {
-			return this.uiState.recommendations.models
+			result = this.uiState.recommendations.models
 		}
 		else {
 			let trackMap = {}
@@ -194,10 +204,16 @@ export default class SpotifyStore  {
 
 			let models = tracks.concat(albumTracks)
 			if (this.filter.enabled) {
-				return models.filter((model) => this.filter.filterFunc(model))
+				result = models.filter((model) => this.filter.filterFunc(model))
 			} else {
-				return models
+				result = models
+			}
+
+			if (this.uiState.searchText != null && this.uiState.searchText.length > 0) {
+				result = result.filter((model) => model.hasText(this.uiState.searchText))
 			}
 		}
+
+		return result
 	}
 }

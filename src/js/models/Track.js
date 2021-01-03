@@ -26,6 +26,22 @@ export default class Track  {
 		return this.attributes.track_number
 	}
 
+	artistHasText(text) {
+		for (let artist of this.attributes.artists) {
+			if (artist.name.toLowerCase().includes(text))
+				return true
+		}
+
+		return false
+	}
+
+	hasText(text) {
+		let search = text.toLowerCase()
+		return this.attributes.name.toLowerCase().includes(search) ||
+			this.attributes.album.name.toLowerCase().includes(search) ||
+			this.artistHasText(search)
+	}
+
 	getValue(selector) {
 		let selectors = selector.split('.')
 		let value = this
