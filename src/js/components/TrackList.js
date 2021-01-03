@@ -12,6 +12,7 @@ class TrackList extends React.Component {
 		'attributes.name': { title: 'Track Name', width: 270 },
 		albumName: { title: 'Album Name', width: 270 },
 		'attributes.artists.name': { title: 'Artist', width: 180 },
+		btn_play: { title: 'Play', width: 80 },
 		'features.tempo': { title: 'Tempo', width: 60 },
 		'features.danceability': { title: 'Danceability', width: 85 },
 		'features.energy': { title: 'Energy', width: 60 },
@@ -20,7 +21,6 @@ class TrackList extends React.Component {
 		'features.loudness': { title: 'Loudness', width: 60 },
 		
 		btn_debug: { title: 'Debug', width: 80 },
-		btn_play: { title: 'Play', width: 80 },
 		btn_add: { title: 'Playlist', width: 80 },
 		btn_similar: { title: 'Similar', width: 80 },
 	}
@@ -94,7 +94,13 @@ class TrackList extends React.Component {
 				if (key == 'btn_debug' && AppSettings.isDev()) {
 					data[key] = <sp-button key={ `debug_${this.index}`} onClick={ () => console.log(track) } variant='primary'>Log</sp-button> // eslint-disable-line no-console
 				} else if (key == 'btn_play') {
-					data[key] = <Observer>{ () => <sp-button key={ `play_${this.index}`} onClick={ () => this.playTrack(track) } variant='primary'>{ this.getPlayButtonText(track) }</sp-button> }</Observer>
+					data[key] = <Observer>{ () => {
+						let className = S.playButton
+						if (this.store.isPlaying(track.attributes.uri)) {
+							className += ' ' + S.playing
+						}
+						return <sp-button class={ className } key={ `play_${this.index}`} onClick={ () => this.playTrack(track) } variant='primary'>{ this.getPlayButtonText(track) }</sp-button> 
+					}}</Observer>
 				}
 				else if (key == 'btn_add') {
 					data[key] = <Observer>{ () => <sp-button key={ `add_${this.index}`} onClick={ () => this.didClickPlaylistButton(track) } variant='primary'>{ this.getPlaylistButtonText(track) }</sp-button> }</Observer>
@@ -109,14 +115,14 @@ class TrackList extends React.Component {
 			return data
 		}
 
-		return <Observer>{ () => <Table
+		return <Table
 			fixed
 			className={ S.tracks } 
 			rowsQuantity={ this.tracks.length }
 			estimatedRowHeight={ 40 }
 			getRowData={ getRowData }
 			columns={ columns }
-		/>}</Observer>
+		/>
 	}
 
 	render() {
