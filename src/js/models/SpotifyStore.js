@@ -5,6 +5,7 @@ import PagedList from './service/PagedList'
 import FilterStore from './FilterStore'
 import TrackStore from './TrackStore'
 import AlbumStore from './AlbumStore'
+import RecommendationStore from './RecommendationStore'
 import PlaylistStore from './PlaylistStore'
 import Playlist from './service/Playlist'
 
@@ -16,6 +17,7 @@ const hydrate = create({
 class UIState {
 	playingUris = []
 	@persist('object', PlaylistStore) playlist = new PlaylistStore()
+	@persist('object', RecommendationStore) recommendations = new RecommendationStore()
 	@persist selectedTab = 'tracks'
 
 	tabs = {
@@ -24,6 +26,9 @@ class UIState {
 		},
 		playlist: {
 			title: 'Current Playlist'
+		},
+		similar: {
+			title: 'Similar Songs'
 		}
 	}
 
@@ -96,10 +101,17 @@ export default class SpotifyStore  {
 		await Promise.all([
 			hydrate('store', this)
 		])
+		// user's saved albums
 		this.savedAlbumsList = new PagedList()
 		this.savedAlbumsList.hydrate(this.albums, this.service)
+		// user's saved tracks
 		this.savedTracksList = new PagedList()
 		this.savedTracksList.hydrate(this.tracks, this.service)	
+		// recommendations based on seed track
+		this.recommendedTracksList = new PagedList()
+		this.recommendedTracksList.hydrate(this.uiState.recommendations, this.service)	
+
+		// TODO: Tracks from user's saved playlists
 		
 		this.fetchUserInfoJP()
 	}
@@ -122,10 +134,10 @@ export default class SpotifyStore  {
 		this.savedAlbumsList.fetchAllJP()
 	}
 
-	async fetchTrackFeaturesJP() {
+	async fetchTrackFeaturesJP(tracks = this.currentTracks) {
 		let href = 'https://api.spotify.com/v1/audio-features'
 		let ids = []
-		for (let track of this.currentTracks) {
+		for (let track of tracks) {
 			if (Object.keys(track.features).length > 3) { continue }
 			if (ids.length >= 100) { break }
 			ids.push(track.id)
@@ -136,6 +148,7 @@ export default class SpotifyStore  {
 		let json = await this.service.fetchJP(href)
 		let features = json.audio_features
 		this.savedTracksList.mapData(features, 'setFeatures')
+		this.recommendedTracksList.mapData(features, 'setFeatures')
 		this.albums.setTrackFeatures(features)
 		return true
 	}
@@ -146,6 +159,13 @@ export default class SpotifyStore  {
 		}
 	}
 
+	async getRecommendationsJP(track) {
+		this.uiState.recommendations.reset()
+		this.uiState.recommendations.setSeedTrack(track)		
+		await this.recommendedTracksList.fetchJP()
+		this.fetchTrackFeaturesJP(this.uiState.recommendations.models)
+	}
+
 	@action updateUserInfo(userInfo) {
 		this.userInfo = userInfo
 	}
@@ -154,6 +174,9 @@ export default class SpotifyStore  {
 		let uiState = this.uiState
 		if (uiState.selectedTab == 'playlist') {
 			return this.playlist.models
+		}
+		else if (uiState.selectedTab == 'similar') {
+			return this.uiState.recommendations.models
 		}
 		else {
 			let trackMap = {}

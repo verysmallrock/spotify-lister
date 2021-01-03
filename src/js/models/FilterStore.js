@@ -4,7 +4,7 @@ let allFilters = {
 	acousticness: { title: 'Acousticness', minSlider: 0, maxSlider: 1, minDefault: 0.2, maxDefault: 1, step: 0.1},
 	danceability: { title: 'Danceability', minSlider: 0, maxSlider: 1, minDefault: 0.5, maxDefault: 1, step: 0.1},
 	duration_ms: { title: 'Duration (ms)', minSlider: 5000, maxSlider: 0, minDefault: 180000, maxDefault: 6000000},
-	energy: { title: 'Energy', minSlider: 0, maxSlider: 1, minDefault: 0.5, maxDefault: 1, step: 0.1},
+	energy: { title: 'Energy', minSlider: 0, maxSlider: 1, minDefault: 0.4, maxDefault: 1, step: 0.1},
 	instrumentalness: { title: 'Instrumentalness', minSlider: 0, maxSlider: 1, minDefault: 0, maxDefault: 1, step: 0.1},
 	liveness: { title: 'Liveness', minSlider: 0, maxSlider: 1, minDefault: 0, maxDefault: 1, step: 0.1},
 	loudness: { title: 'Loudness', minSlider: -20, maxSlider: 0, minDefault: -8.5, maxDefault: 0},
@@ -25,6 +25,7 @@ let filters = {
 	loudness: allFilters.loudness,
 	danceability: allFilters.danceability,
 	valence: allFilters.valence,
+	energy: allFilters.energy,
 	speechiness: allFilters.speechiness
 }
 

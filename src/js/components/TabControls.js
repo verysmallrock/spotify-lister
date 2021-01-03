@@ -58,11 +58,16 @@ class TabControls extends React.Component {
 				<sp-button onClick={ () => this.onAddAllToPlaylistClicked() } variant='primary' >Add All to Playlist</sp-button>
 				<span>{ this.getProgressString() }</span>
 			</div>
-		} else { 
+		} else if (this.store.uiState.selectedTab == 'playlist') { 
 			return <div className={ S.root }>
 				<TextField id='playlist-name' defaultValue={ this.store.playlist.name } label='Name' onChange={ (e) => this.onPlaylistNameChange(e) } />
 				<sp-button onClick={ () => this.onSavePlaylistClicked() } variant='primary' >Save Playlist</sp-button>
 				<sp-button onClick={ () => this.onClearPlaylistClicked() } variant='primary' >Clear Playlist</sp-button>
+			</div>
+		} else if (this.store.uiState.selectedTab == 'similar') { 
+			return <div className={ S.root }>
+				<sp-button onClick={ () => this.onAddAllToPlaylistClicked() } variant='primary' >Add All to Playlist</sp-button>
+				<span>{ "Use the 'Similar' button to find similar tracks" }</span>
 			</div>
 		}
 	}

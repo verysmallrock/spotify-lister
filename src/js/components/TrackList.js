@@ -22,6 +22,7 @@ class TrackList extends React.Component {
 		btn_debug: { title: 'Debug', width: 80 },
 		btn_play: { title: 'Play', width: 80 },
 		btn_add: { title: 'Playlist', width: 80 },
+		btn_similar: { title: 'Similar', width: 80 },
 	}
 
 	static get propTypes() {
@@ -49,6 +50,11 @@ class TrackList extends React.Component {
 		} else {
 			this.store.playlist.removeTrack(track)
 		}
+	}
+
+	async didClickSimilarButton(track) {
+		this.store.getRecommendationsJP(track)
+		this.store.uiState.setSelectedTab('similar')
 	}
 	
 	getPlaylistButtonText(track) {
@@ -93,21 +99,24 @@ class TrackList extends React.Component {
 				else if (key == 'btn_add') {
 					data[key] = <Observer>{ () => <sp-button key={ `add_${this.index}`} onClick={ () => this.didClickPlaylistButton(track) } variant='primary'>{ this.getPlaylistButtonText(track) }</sp-button> }</Observer>
 				}
+				else if (key == 'btn_similar') {
+					data[key] = <Observer>{ () => <sp-button key={ `similar_${this.index}`} onClick={ () => this.didClickSimilarButton(track) } variant='primary'>Similar</sp-button> }</Observer>
+				}
 				else {
-					data[key] = track.getValue(key)
+					data[key] = <Observer>{ () => track.getValue(key) ?? <span></span> }</Observer>
 				}
 			}
 			return data
 		}
 
-		return <Table
+		return <Observer>{ () => <Table
 			fixed
 			className={ S.tracks } 
 			rowsQuantity={ this.tracks.length }
 			estimatedRowHeight={ 40 }
 			getRowData={ getRowData }
 			columns={ columns }
-		/>
+		/>}</Observer>
 	}
 
 	render() {

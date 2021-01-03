@@ -28,8 +28,6 @@ export default class PagedList {
 		this.store._addModels(newModels)
 	}
 
-	
-
 	async fetchJP(asObservable = true) {
 		if (this.finished) {
 			return Promise.resolve()
@@ -51,8 +49,13 @@ export default class PagedList {
 		let modelClass = this.store.modelClass
 		let modelAccessor = this.store.modelAccessor
 		let newModels = []
-		for (let item of json.items) {
-			let model = new modelClass(item[modelAccessor], item.added_at)
+		let itemAccessor = this.store.itemAccessor ?? 'items'
+		for (let item of json[itemAccessor]) {
+			let model
+			if (this.store.modelAccessor) 
+				model = new modelClass(item[this.store.modelAccessor], item.added_at)
+			else
+				model = new modelClass(item, '')
 			newModels.push(model)
 		}
 		if (asObservable)
