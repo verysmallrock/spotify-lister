@@ -3,6 +3,7 @@ import React from 'react'
 import PropTypes from 'prop-types'
 import { observer, Observer } from 'mobx-react'
 import AppSettings from '../utils/AppSettings'
+import LinearProgress from '@material-ui/core/LinearProgress'
 import S from './TrackList.css'
 
 @observer
@@ -13,6 +14,7 @@ class TrackList extends React.Component {
 		albumName: { title: 'Album Name', width: 270 },
 		'attributes.artists.name': { title: 'Artist', width: 180 },
 		btn_play: { title: 'Play', width: 80 },
+		'attributes.popularity': { title: 'Popularity', width: 85 },
 		'features.tempo': { title: 'Tempo', width: 60 },
 		'features.danceability': { title: 'Danceability', width: 85 },
 		'features.energy': { title: 'Energy', width: 60 },
@@ -101,6 +103,9 @@ class TrackList extends React.Component {
 						}
 						return <sp-button class={ className } key={ `play_${this.index}`} onClick={ () => this.playTrack(track) } variant='primary'>{ this.getPlayButtonText(track) }</sp-button> 
 					}}</Observer>
+				}
+				else if (key == 'attributes.popularity') {
+					data[key] = <Observer>{ () => <LinearProgress variant="determinate" value={track.getValue(key)} /> }</Observer>
 				}
 				else if (key == 'btn_add') {
 					data[key] = <Observer>{ () => <sp-button key={ `add_${this.index}`} onClick={ () => this.didClickPlaylistButton(track) } variant='primary'>{ this.getPlaylistButtonText(track) }</sp-button> }</Observer>
