@@ -32,7 +32,7 @@ export default class Playlist {
 				method: 'POST',
 				body: JSON.stringify(body)
 			}
-			let addResponse = await this.service.fetchJP(href, options)
+			await this.service.fetchJP(href, options)
 			position += tracksToAdd.length
 		}
 		
