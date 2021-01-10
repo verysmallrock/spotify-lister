@@ -11,7 +11,7 @@ import Playlist from './service/Playlist'
 
 const hydrate = create({
 	storage: localForage,
-	debounce: 3000
+	debounce: 1000
 })
 
 class UIState {
@@ -66,7 +66,9 @@ export default class SpotifyStore  {
 	// NOTE: ui state is persisted in a different db so it doesn't get 
 	// blocked by the long persist call for tracks.
 	uiState = new UIState()
+	loading = true
 
+	@persist hasStoredDatabase = false
 	@persist('object') userInfo = {}
 	@persist('object', AlbumStore) albums = new AlbumStore()
 	@persist('object', TrackStore) tracks = new TrackStore()
@@ -82,7 +84,7 @@ export default class SpotifyStore  {
 		makeAutoObservable(this)
 		this.service = service // SpotifyService
 
-		setTimeout(() => { this.init() }, 500)
+		this.init()
 	}
 
 	playUri(uri) {
@@ -115,10 +117,33 @@ export default class SpotifyStore  {
 		// recommendations based on seed track
 		this.recommendedTracksList = new PagedList()
 		this.recommendedTracksList.hydrate(this.uiState.recommendations, this.service)	
-
+		if (!this.hasStoredDatabase) {
+			await this.loadAllUserData()
+		}
+		setTimeout( () => { this.setLoading(false) }, 1000)
 		// TODO: Tracks from user's saved playlists
 		
 		this.fetchUserInfoJP()
+	}
+
+	@action setLoading(loading) {
+		this.loading = loading
+	}
+	
+	async loadAllUserData() {
+		await this.fetchSavedTracksJP()
+		await this.fetchSavedAlbumsJP()
+		await this.fetchTrackFeaturesJP()
+		this.hasStoredDatabase = true
+	}
+
+	resetAllData() {
+		console.log(localForage)
+		return new Promise((resolve, reject) => {
+			console.log('deleting data...')
+			localForage.clear(resolve)
+		})
+
 	}
 
 	async fetchUserInfoJP() {
@@ -131,12 +156,12 @@ export default class SpotifyStore  {
 
 	async fetchSavedTracksJP() {
 		await this.savedTracksList.fetchJP() // init
-		this.savedTracksList.fetchAllJP()
+		return this.savedTracksList.fetchAllJP()
 	}
 
 	async fetchSavedAlbumsJP() {
 		await this.savedAlbumsList.fetchJP() // init
-		this.savedAlbumsList.fetchAllJP()
+		await this.savedAlbumsList.fetchAllJP()
 	}
 
 	async fetchTrackFeaturesJP(tracks = this.currentTracks, recommendationsOnly = false) {

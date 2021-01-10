@@ -4,6 +4,7 @@ import PropTypes from 'prop-types'
 import { createMuiTheme } from '@material-ui/core/styles'
 import { ThemeProvider } from '@material-ui/styles'
 import S from './SpotifyLister.css'
+import AppLoading from './AppLoading'
 import SpotifyService from '../models/service/SpotifyService'
 import SpotifyStore from '../models/SpotifyStore'
 import { observer } from 'mobx-react'
@@ -80,6 +81,7 @@ class SpotifyLister extends React.Component {
 	render() {
 		return (<ThemeProvider theme={ darkTheme } >
 			<div className={ S.root } >
+				{ this.store.loading && <AppLoading store={ this.store }/>}
 				<TopControls store={ this.store }/>
 				
 				<TabControls store={ this.store } />
