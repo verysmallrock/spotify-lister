@@ -90,6 +90,7 @@ class SpotifyLister extends React.Component {
 				</div>
 				{this.store.playingUris?.length > 0 && <div className={ S.player }>
 					{ this.store.windowState.playerReady && <SpotifyPlayer 
+						callback={ (state) => this.store.updatePlayerState(state) }
 						uris={ this.store.playingUris } 
 						token={ this.auth.access_token } 
 						autoPlay={ true }

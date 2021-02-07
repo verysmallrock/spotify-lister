@@ -42,8 +42,10 @@ class TrackList extends React.Component {
 		return this.store?.currentTracks ?? []
 	}
 
-	playTrack(track) {
-		this.store.playUri(track.attributes.uri)
+	playFrom(index) {
+		let tracks = this.tracks.slice(index, index + 20)
+		let uris = tracks.map((track) => track.attributes.uri )
+		this.store.playUris(uris)
 	}
 
 	didClickPlaylistButton(track) {
@@ -101,7 +103,7 @@ class TrackList extends React.Component {
 						if (this.store.isPlaying(track.attributes.uri)) {
 							className += ' ' + S.playing
 						}
-						return <sp-button class={ className } key={ `play_${this.index}`} onClick={ () => this.playTrack(track) } variant='primary'>{ this.getPlayButtonText(track) }</sp-button> 
+						return <sp-button class={ className } key={ `play_${this.index}`} onClick={ () => this.playFrom(index) } variant='primary'>{ this.getPlayButtonText(track) }</sp-button> 
 					}}</Observer>
 				}
 				else if (key == 'attributes.popularity') {
