@@ -1,5 +1,3 @@
-import { action, observable } from 'mobx'
-
 export default class PagedList {
 	init(store, service) {
 		this.store = store
@@ -47,7 +45,6 @@ export default class PagedList {
 
 	_storeModels(json, asObservable = true) {
 		let modelClass = this.store.modelClass
-		let modelAccessor = this.store.modelAccessor
 		let newModels = []
 		let itemAccessor = this.store.itemAccessor ?? 'items'
 		for (let item of json[itemAccessor]) {
