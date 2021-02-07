@@ -17,6 +17,7 @@ const hydrate = create({
 class UIState {
 	playingUris = []
 	playerState = null
+	currentPlayerTrack = null
 	@persist('object', PlaylistStore) playlist = new PlaylistStore()
 	@persist('object', RecommendationStore) recommendations = new RecommendationStore()
 	@persist selectedTab = 'tracks'
@@ -58,8 +59,15 @@ class UIState {
 		this.searchText = text
 	}
 
-	isPlaying(uri) {
-		return uri == this.playerState?.track?.uri
+	@action setPlayerState(state) {
+		this.playerState = state
+		this.currentPlayerTrack = state.track
+	}
+
+	isPlaying(track) {
+		if (!this.currentPlayerTrack?.name)
+			return false
+		return track?.attributes.id == this.currentPlayerTrack?.id || track?.attributes.name == this.currentPlayerTrack?.name
 	}
 }
 
@@ -93,11 +101,11 @@ export default class SpotifyStore  {
 	}
 
 	updatePlayerState(state) {
-		this.uiState.playerState = state
+		this.uiState.setPlayerState(state)
 	}
 
-	isPlaying(uri) {
-		return this.uiState.isPlaying(uri)
+	isPlaying(track) {
+		return this.uiState.isPlaying(track)
 	}
 
 	get playingUris() {

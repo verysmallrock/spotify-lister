@@ -70,7 +70,7 @@ class TrackList extends React.Component {
 	}
 
 	getPlayButtonText(track) {
-		if(this.store.isPlaying(track.attributes.uri)) {
+		if(this.store.isPlaying(track)) {
 			return 'Playing'
 		} else {
 			return 'Play'
@@ -100,7 +100,7 @@ class TrackList extends React.Component {
 				} else if (key == 'btn_play') {
 					data[key] = <Observer>{ () => {
 						let className = S.playButton
-						if (this.store.isPlaying(track.attributes.uri)) {
+						if (this.store.isPlaying(track)) {
 							className += ' ' + S.playing
 						}
 						return <sp-button class={ className } key={ `play_${this.index}`} onClick={ () => this.playFrom(index) } variant='primary'>{ this.getPlayButtonText(track) }</sp-button> 
