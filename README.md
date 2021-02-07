@@ -4,31 +4,35 @@ original repo cloned from rexpack: https://github.com/bengrunfeld/rexpack
 
 TBD
 
-## Installation
+## Run Locally
 
-    yarn install
-
-## Quickstart for development
-
-    yarn run dev
-
-## Create a Development build
-
-    yarn run buildDev
-
-## Create a Production build
-
-    yarn run buildProd
-
-## Run the code on a local webserver
-
-    yarn run start
+```
+    $ nvm use
+    $ yarn install
+    $ yarn run dev
+```
 
 Then navigate to `http://localhost:8080`
 
-## Deploy to Google App Engine Flex
+## Heroku deploy
 
-    yarn run deploy
+```
+    $ git push heroku master
+```
+
+# OLD DOCS TBD
+
+## Create a Development build
+
+```
+    $ yarn run buildDev
+```
+
+## Create a Production build
+
+```
+    $ yarn run buildProd
+```
 
 ## Run test
 
