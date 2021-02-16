@@ -1,4 +1,4 @@
-import { action, makeAutoObservable, observable } from 'mobx'
+import { action, makeAutoObservable } from 'mobx'
 import { create, persist } from 'mobx-persist'
 import localForage from 'localforage'
 import PagedList from './service/PagedList'
@@ -75,6 +75,7 @@ export default class SpotifyStore  {
 	// NOTE: ui state is persisted in a different db so it doesn't get
 	// blocked by the long persist call for tracks.
 	uiState = new UIState()
+	isPlayerPaused = false
 	loading = true
 
 	@persist hasStoredDatabase = false
@@ -106,6 +107,10 @@ export default class SpotifyStore  {
 
 	isPlaying(track) {
 		return this.uiState.isPlaying(track)
+	}
+
+	pausePlayer(pause) {
+		this.isPlayerPaused = pause
 	}
 
 	get playingUris() {
@@ -152,8 +157,7 @@ export default class SpotifyStore  {
 
 	resetAllData() {
 		console.log(localForage)
-		return new Promise((resolve, reject) => {
-			console.log('deleting data...')
+		return new Promise((resolve) => {
 			localForage.clear(resolve)
 		})
 
@@ -199,7 +203,7 @@ export default class SpotifyStore  {
 		catch (errorInfo) {
 			console.error(errorInfo.message)
 			if(errorInfo.response.status == 429) {
-				console.log('Spotify says SLOW DOWN')
+				console.warn('Spotify says SLOW DOWN')
 				await this.sleep(3000) // TODO: read Retry-After header
 			} else {
 				await this.sleep(300)

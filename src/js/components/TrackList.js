@@ -8,7 +8,7 @@ import S from './TrackList.css'
 
 @observer
 class TrackList extends React.Component {
-	
+
 	columnInfo = {
 		'attributes.name': { title: 'Track Name', width: 270 },
 		albumName: { title: 'Album Name', width: 270 },
@@ -21,7 +21,7 @@ class TrackList extends React.Component {
 		'features.valence': { title: 'Valence', width: 60 },
 		'features.speechiness': { title: 'Speechiness', width: 80 },
 		'features.loudness': { title: 'Loudness', width: 60 },
-		
+
 		btn_debug: { title: 'Debug', width: 80 },
 		btn_add: { title: 'Playlist', width: 80 },
 		btn_similar: { title: 'Similar', width: 80 },
@@ -43,9 +43,15 @@ class TrackList extends React.Component {
 	}
 
 	playFrom(index) {
-		let tracks = this.tracks.slice(index, index + 20)
-		let uris = tracks.map((track) => track.attributes.uri )
-		this.store.playUris(uris)
+		let track = this.tracks[index]
+		if (this.store.isPlaying(track)) {
+			this.store.pausePlayer(!this.store.isPlayerPaused)
+		} else {
+			this.store.pausePlayer(false)
+			let tracks = this.tracks.slice(index, index + 20)
+			let uris = tracks.map((track) => track.attributes.uri )
+			this.store.playUris(uris)
+		}
 	}
 
 	didClickPlaylistButton(track) {
@@ -60,7 +66,7 @@ class TrackList extends React.Component {
 		this.store.getRecommendationsJP(track)
 		this.store.uiState.setSelectedTab('similar')
 	}
-	
+
 	getPlaylistButtonText(track) {
 		if(this.store.playlist.get(track.id) == null) {
 			return 'Add'
@@ -71,7 +77,10 @@ class TrackList extends React.Component {
 
 	getPlayButtonText(track) {
 		if(this.store.isPlaying(track)) {
-			return 'Playing'
+			if(this.store.isPlayerPaused)
+				return 'Paused'
+			else
+				return 'Playing'
 		} else {
 			return 'Play'
 		}
@@ -79,7 +88,6 @@ class TrackList extends React.Component {
 
 	renderTracks() {
 		let { columnInfo } = this
- 
 		let columns = []
 		for (let key of Object.keys(columnInfo)) {
 			if (key == 'btn_debug' && AppSettings.isProd())
@@ -103,7 +111,7 @@ class TrackList extends React.Component {
 						if (this.store.isPlaying(track)) {
 							className += ' ' + S.playing
 						}
-						return <sp-button class={ className } key={ `play_${this.index}`} onClick={ () => this.playFrom(index) } variant='primary'>{ this.getPlayButtonText(track) }</sp-button> 
+						return <sp-button class={ className } key={ `play_${this.index}`} onClick={ () => this.playFrom(index) } variant='primary'>{ this.getPlayButtonText(track) }</sp-button>
 					}}</Observer>
 				}
 				else if (key == 'attributes.popularity') {
@@ -124,7 +132,7 @@ class TrackList extends React.Component {
 
 		return <Table
 			fixed
-			className={ S.tracks } 
+			className={ S.tracks }
 			rowsQuantity={ this.tracks.length }
 			estimatedRowHeight={ 40 }
 			getRowData={ getRowData }

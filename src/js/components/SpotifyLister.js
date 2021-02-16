@@ -22,7 +22,7 @@ const darkTheme = createMuiTheme({
 class WindowState {
 	scrolledDown = false
 	playerReady = false
-	
+
 	constructor() {
 		makeAutoObservable(this)
 		window.addEventListener('scroll', ()=> {
@@ -48,11 +48,11 @@ class SpotifyLister extends React.Component {
 		super(props)
 		this.service = new SpotifyService(this.auth.access_token, this.auth.refresh_token)
 		this.store = new SpotifyStore(this.service)
-		
+
 		window.spotifystore = this.store
 
 		this.store.windowState = new WindowState()
-		
+
 		this.setupPlayer()
 	}
 
@@ -83,20 +83,21 @@ class SpotifyLister extends React.Component {
 			<div className={ S.root } >
 				{ this.store.loading && <AppLoading store={ this.store }/>}
 				<TopControls store={ this.store }/>
-				
+
 				<TabControls store={ this.store } />
-				<div className={ S.content }>					
+				<div className={ S.content }>
 					<TrackList store={ this.store } />
 				</div>
 				{this.store.playingUris?.length > 0 && <div className={ S.player }>
-					{ this.store.windowState.playerReady && <SpotifyPlayer 
+					{ this.store.windowState.playerReady && <SpotifyPlayer
 						callback={ (state) => this.store.updatePlayerState(state) }
-						uris={ this.store.playingUris } 
-						token={ this.auth.access_token } 
+						uris={ this.store.playingUris }
+						token={ this.auth.access_token }
 						autoPlay={ true }
+						play={ !this.store.isPlayerPaused }
 						persistDeviceSelection={ true }
 						magnifySliderOnHover={ true }
-						styles={ this.playerStyles }/> 
+						styles={ this.playerStyles }/>
 					}
 				</div>
 			}
