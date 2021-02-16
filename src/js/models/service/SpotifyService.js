@@ -17,7 +17,7 @@ export default class SpotifyService {
 	}
 
 	async fetchJP(href, options = {}) {
-		this._setAuthHeader(options)	
+		this._setAuthHeader(options)
 		let request = fetch(href, options)
 		let response = await request
 		if (response.ok) {
@@ -28,7 +28,7 @@ export default class SpotifyService {
 				return window.location.href = `${window.location.protocol}//${window.location.host}/refresh_token?refresh_token=${this.refreshToken}`
 			}
 			let error = await response.text()
-			throw `Error fetching from Spotify: ${response.status} (${error})`
+			throw { message: `Error fetching from Spotify: ${response.status} (${error})`, response: response, text: error }
 		}
 	}
 }
