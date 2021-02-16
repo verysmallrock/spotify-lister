@@ -72,7 +72,7 @@ class UIState {
 }
 
 export default class SpotifyStore  {
-	// NOTE: ui state is persisted in a different db so it doesn't get 
+	// NOTE: ui state is persisted in a different db so it doesn't get
 	// blocked by the long persist call for tracks.
 	uiState = new UIState()
 	loading = true
@@ -126,27 +126,27 @@ export default class SpotifyStore  {
 		this.savedAlbumsList.hydrate(this.albums, this.service)
 		// user's saved tracks
 		this.savedTracksList = new PagedList()
-		this.savedTracksList.hydrate(this.tracks, this.service)	
+		this.savedTracksList.hydrate(this.tracks, this.service)
 		// recommendations based on seed track
 		this.recommendedTracksList = new PagedList()
-		this.recommendedTracksList.hydrate(this.uiState.recommendations, this.service)	
+		this.recommendedTracksList.hydrate(this.uiState.recommendations, this.service)
 		if (!this.hasStoredDatabase) {
 			await this.loadAllUserData()
 		}
 		setTimeout( () => { this.setLoading(false) }, 1000)
 		// TODO: Tracks from user's saved playlists
-		
+
 		this.fetchUserInfoJP()
 	}
 
 	@action setLoading(loading) {
 		this.loading = loading
 	}
-	
+
 	async loadAllUserData() {
 		await this.fetchSavedTracksJP()
 		await this.fetchSavedAlbumsJP()
-		await this.fetchTrackFeaturesJP()
+		await this.fetchAllTrackFeaturesJP()
 		this.hasStoredDatabase = true
 	}
 
@@ -161,7 +161,7 @@ export default class SpotifyStore  {
 
 	async fetchUserInfoJP() {
 		let href = 'https://api.spotify.com/v1/me'
-			
+
 		let json = await this.service.fetchJP(href)
 		this.updateUserInfo(json)
 		return this.userInfo
@@ -208,7 +208,7 @@ export default class SpotifyStore  {
 
 	async getRecommendationsJP(track) {
 		this.uiState.recommendations.reset()
-		this.uiState.recommendations.setSeedTrack(track)		
+		this.uiState.recommendations.setSeedTrack(track)
 		await this.recommendedTracksList.fetchJP()
 		this.fetchTrackFeaturesJP(this.uiState.recommendations.models, true)
 	}
