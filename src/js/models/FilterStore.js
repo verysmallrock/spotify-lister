@@ -12,11 +12,12 @@ let allFilters = {
 	tempo: { title: 'Tempo', minSlider: 40, maxSlider: 200, minDefault: 85, maxDefault: 95},
 	valence: { title: 'Valence', minSlider: 0, maxSlider: 1, minDefault: 0, maxDefault: 1, step: 0.1},
 
+
 	// TODO 'key' (need to translate to notes)
 	// TODO 'mode' (what is that?)
-	// TODO 'popularity' (for seeded search)
+	popularity: { title: 'Popularity', minSlider: 0, maxSlider: 100, minDefault: 0, maxDefault: 100, step: 1},
 	// TODO 'time_signature'
-	
+
 }
 
 // Filters show in the UI
@@ -26,18 +27,19 @@ let filters = {
 	danceability: allFilters.danceability,
 	valence: allFilters.valence,
 	energy: allFilters.energy,
-	speechiness: allFilters.speechiness
+	speechiness: allFilters.speechiness,
+	popularity: allFilters.popularity
 }
 
-// TODO: 
+// TODO:
 class SeedSearchStore {
 	constructor() {
-		
+
 	}
 }
 
 export default class FilterStore  {
-	enabled = false	
+	enabled = false
 
 	constructor() {
 		this.setupFilters()
@@ -76,17 +78,28 @@ export default class FilterStore  {
 		if (!model.features || Object.keys(model.features).length == 0) { return false }
 
 		for(let key of Object.keys(filters)) {
+			if(key == null) {
+				console.log('why am I undefined?', filters)
+				continue
+			}
 			let filter = filters[key]
 			let value = model.features[key]
+			if(!value)
+				value = model.attributes[key]
+			if (value == null)
+				return false
+
 			let camel = key.charAt(0).toUpperCase() + key.slice(1)
 			let minProp = `min${camel}`
 			let maxProp = `max${camel}`
-			if (value <= filter.minSlider || value >= filter.maxSlider) 
+			if (filter.minSlider === this[minProp] && filter.maxSlider == this[maxProp])
+				continue
+			if (value <= filter.minSlider || value >= filter.maxSlider)
 				return false
-			if (value <= this[minProp] || value >= this[maxProp]) 
+			if (value <= this[minProp] || value >= this[maxProp])
 				return false
 		}
-	
+
 		return true
 	}
 }

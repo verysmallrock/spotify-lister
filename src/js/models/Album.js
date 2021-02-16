@@ -14,13 +14,16 @@ export default class Album  {
 		makeAutoObservable(this)
 		this.attributes = attributes
 		this.addedAt = addedAt
-		this.id = attributes.id	
+		this.id = attributes.id
 
 		if (attributes.tracks) {
 			for (let data of attributes.tracks.items) {
 				let albumInfo = Object.assign({}, attributes)
 				delete albumInfo.tracks // avoid circular reference
 				data.album = albumInfo
+				// HACK: use album popularity for track popularity
+				// The album->tracks array doesn't contain popularity
+				data.popularity = attributes.popularity
 				this.tracks.push(new Track(data, addedAt))
 			}
 		}
@@ -32,7 +35,7 @@ export default class Album  {
 	setTrackFeatures(features) {
 		for (let track of this.tracks) {
 			if (track.id == features.id) {
-				
+
 			}
 		}
 	}

@@ -10,6 +10,16 @@ import S from './FilterControls.css'
 
 @observer
 class FilterControls extends React.Component {
+	filters = [
+		'tempo',
+		'loudness',
+		'danceability',
+		'energy',
+		'valence',
+		'speechiness',
+		'popularity',
+	]
+
 	static get propTypes() {
 		return {
 			store: PropTypes.any
@@ -29,11 +39,18 @@ class FilterControls extends React.Component {
 		this.store.filter.enabled = !this.store.filter.enabled
 	}
 
+	resetFilters() {
+		for (let filter of this.filters) {
+			let info = this.store.filter.getFilterInfo(filter)
+			this.store.filter.setFilter(filter, [info.minSlider, info.maxSlider])
+		}
+	}
+
 	renderSlider(prop) {
 		let filter = this.store.filter.getFilterInfo(prop)
 		let title = filter.title
 
-		return <div className={ S.slider }>
+		return <div key={ prop } className={ S.slider }>
 				<Typography id={ `${prop}-range-slider` } gutterBottom>{ `${title} Range` }</Typography>
 				<Slider
 					value={ [ this.store.filter[filter.minProp], this.store.filter[filter.maxProp]] }
@@ -47,20 +64,25 @@ class FilterControls extends React.Component {
 			</div>
 	}
 
+	renderSliders() {
+		let render = []
+		for (let filter of this.filters) 
+			render.push(this.renderSlider(filter))
+		return render
+	}
+
 	render() {
 		return <div className={ S.root }>
 			<FormControlLabel
 				control={<Checkbox checked={this.store.filter.enabled} onChange={() => this.toggleEnabled() } name="enabled" />}
 				label="Filter Results"
 			/>
-			{ this.renderSlider('tempo') }
-			{ this.renderSlider('loudness') }
-			{ this.renderSlider('danceability') }
-			{ this.renderSlider('energy') }
-			{ this.renderSlider('valence') }
-			{ this.renderSlider('speechiness') }
 			
+			{ this.renderSliders() }
 			
+			<div className={ S.buttons }>
+				<sp-button  onClick={ () => this.resetFilters() } variant='primary' >Reset Filters</sp-button>
+			</div>
 		</div>
 	}
 }

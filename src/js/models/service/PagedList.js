@@ -1,7 +1,7 @@
 export default class PagedList {
 	init(store, service) {
 		this.store = store
-		this.service = service	
+		this.service = service
 	}
 
 	hydrate(store, service) {
@@ -49,7 +49,7 @@ export default class PagedList {
 		let itemAccessor = this.store.itemAccessor ?? 'items'
 		for (let item of json[itemAccessor]) {
 			let model
-			if (this.store.modelAccessor) 
+			if (this.store.modelAccessor)
 				model = new modelClass(item[this.store.modelAccessor], item.added_at)
 			else
 				model = new modelClass(item, '')

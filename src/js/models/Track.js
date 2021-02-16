@@ -11,7 +11,7 @@ export default class Track  {
 		makeAutoObservable(this)
 		this.attributes = attributes
 		this.addedAt = addedAt
-		this.id = attributes.id	
+		this.id = attributes.id
 	}
 
 	@action setFeatures(features) {
@@ -53,7 +53,7 @@ export default class Track  {
 			}
 			value = value[prop]
 		}
-		
+
 		return value
 	}
 }
