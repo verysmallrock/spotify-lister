@@ -17,9 +17,18 @@ class AppLoading extends React.Component {
 			return 'Loading Spotify data...'
 		}
 		if (this.store.tracks.loadedCount > 0)
-			str += `Loaded ${this.store.tracks.loadedCount} of ${this.store.tracks.total} saved tracks`
+			str += `Loaded ${this.store.tracks.loadedCount} of ${this.store.tracks.total} saved tracks.\n`
 		if (this.store.albums.loadedCount > 0)
-			str += `, Loaded ${this.store.albums.loadedCount} of ${this.store.albums.total} albums`
+			str += `Loaded ${this.store.albums.loadedCount} of ${this.store.albums.total} albums.\n`
+		if(this.store.currentTracks && this.store.currentTracks[0] && this.store.currentTracks[0].features?.tempo != null) {
+			let numFeaturesLoaded = 0
+			for (let track of this.store.currentTracks) {
+				// assume one feature means we have all of em for the track
+				if (track.features.tempo != null)
+					++numFeaturesLoaded
+			}
+			str += `Loaded ${numFeaturesLoaded} of ${this.store.currentTracks.length} track features (this is the last step).\n`
+		}
 		return str
 	}
 
