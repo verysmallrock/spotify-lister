@@ -177,6 +177,10 @@ export default class SpotifyStore  {
 		await this.savedAlbumsList.fetchAllJP()
 	}
 
+	sleep(ms) {
+		return new Promise(resolve => setTimeout(resolve, ms))
+	}
+
 	async fetchTrackFeaturesJP(tracks = this.currentTracks, recommendationsOnly = false) {
 		let href = 'https://api.spotify.com/v1/audio-features'
 		let ids = []
@@ -188,7 +192,21 @@ export default class SpotifyStore  {
 
 		if (ids.length == 0) { return false }
 		href += `?ids=${ids.join(',')}`
-		let json = await this.service.fetchJP(href)
+		let json
+		try {
+			json = await this.service.fetchJP(href)
+		}
+		catch (errorInfo) {
+			console.error(errorInfo.message)
+			if(errorInfo.response.status == 429) {
+				console.log('Spotify says SLOW DOWN')
+				await this.sleep(3000) // TODO: read Retry-After header
+			} else {
+				await this.sleep(300)
+			}
+			// keep trying!
+			return true
+		}
 		let features = json.audio_features
 		if (recommendationsOnly)
 			this.recommendedTracksList.mapData(features, 'setFeatures')
