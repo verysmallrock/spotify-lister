@@ -16,6 +16,11 @@ Then navigate to `http://localhost:8080`
 
 ## Heroku deploy
 
+Install heroku CLI on Windows WSL:
+```
+curl https://cli-assets.heroku.com/install.sh | sh
+```
+
 ```
     $ git push heroku master
 ```
