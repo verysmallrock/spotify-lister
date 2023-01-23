@@ -10,7 +10,7 @@ var client_id, client_secret, redirect_uri;
 
 if (process.env.ENV == 'production') {
 	console.log('running PRODUCTION')
-	redirect_uri = 'https://spotify-song-finder.herokuapp.com/callback'
+	redirect_uri = 'https://spotify-song-finder.onrender.com/callback'
 	client_id = process.env.spotify_client_id
 	client_secret = process.env.spotify_client_secret
 } else {
@@ -57,11 +57,11 @@ router.get('/callback', function(req, res) {
 
 	// your application requests refresh and access tokens
 	// after checking the state parameter
-  
+
 	var code = req.query.code || null;
 	var state = req.query.state || null;
 	var storedState = req.cookies ? req.cookies[stateKey] : null;
-  
+
 	if (state === null || state !== storedState) {
 	  res.redirect('/#' +
 		querystring.stringify({
@@ -81,13 +81,13 @@ router.get('/callback', function(req, res) {
 		},
 		json: true
 	  };
-  
+
 	  request.post(authOptions, function(error, response, body) {
 		if (!error && response.statusCode === 200) {
-  
+
 		  var access_token = body.access_token,
 			  refresh_token = body.refresh_token;
-  
+
 		  // we can also pass the token to the browser to make requests from there
 		  res.redirect('/#' +
 			querystring.stringify({
@@ -117,7 +117,7 @@ router.get('/callback', function(req, res) {
 	  },
 	  json: true
 	};
-  
+
 	request.post(authOptions, function(error, response, body) {
 	  if (!error && response.statusCode === 200) {
 		var access_token = body.access_token;
